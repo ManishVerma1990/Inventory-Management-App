@@ -1,0 +1,162 @@
+/* Prevent text selection */
+* {
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+}
+
+img,
+a {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+:root {
+  padding: 0;
+  margin: 0;
+  /* overflow-x: hidden; */
+}
+html,
+body {
+  overflow: hidden; /* Prevent horizontal scrolling */
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.app {
+  display: flex;
+}
+.head-body-wrapper {
+  height: 100vh;
+  width: 100%;
+}
+.sidebar {
+  display: block;
+  min-width: 150px;
+  background-color: #0f4d0f;
+  height: 100vh;
+  position: sticky !important;
+}
+.brandname {
+  padding: 0.5rem 0.5rem;
+  text-align: center;
+  color: white;
+  border-bottom: 1px solid white;
+}
+
+.sidebar .nav {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0;
+  display: block;
+}
+
+.sidebar .nav .nav-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.nav-item.active {
+  background-color: white; /* Change background when active */
+  color: green !important; /* Change text color when active */
+}
+.sidebar .nav .nav-item li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar .nav .nav-item li span {
+  font-size: 1.25rem;
+}
+
+.body {
+}
+.head-body-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.header {
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 2px 10px -5px rgb(176, 176, 176);
+}
+.header .clock {
+  font-size: 1.15rem;
+}
+
+main {
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1;
+  padding: 0.5rem;
+}
+.form-floating input[list]::after {
+  content: none !important;
+}
+
+.suggestions-list {
+  position: absolute;
+  top: 3rem;
+  z-index: 10;
+  background-color: white;
+  border-radius: 4px;
+  width: 100%;
+  padding: 0;
+  box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.152);
+}
+.suggestions-list li {
+  list-style: none;
+  padding: 4px 10px;
+}
+.suggestions-list li:hover {
+  background: rgba(0, 0, 0, 0.152);
+}
+
+.blur-background {
+  filter: blur(1px);
+  pointer-events: none; /* Prevent interaction with background */
+}
+.modal-overlay {
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-box {
+  width: 80vh;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
