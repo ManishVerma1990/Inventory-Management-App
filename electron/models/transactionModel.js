@@ -13,10 +13,12 @@ const createTable = () => {
     `CREATE TABLE IF NOT EXISTS transactions (
     transaction_id TEXT PRIMARY KEY,
     transaction_type TEXT NOT NULL,
-    customer_name TEXT NOT NULL ,
-    total_price REAL NOT NULL,
+    customer_id TEXT ,
+    salesmen_id TEXT ,
     discount REAL DEFAULT 0,
-    date_time TEXT DEFAULT CURRENT_TIMESTAMP
+    date_time TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (salesmen_id) REFERENCES salesmen(salesmen_id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );`
   );
   db.run(
@@ -31,54 +33,98 @@ const createTable = () => {
 );`
   );
   db.run(
-    `CREATE TABLE IF NOT EXISTS transactions (
-    transaction_id TEXT PRIMARY KEY,
-    transaction_type TEXT NOT NULL,
-    customer_name TEXT NOT NULL ,
-    total_price REAL NOT NULL,
-    discount REAL DEFAULT 0,
-    date_time TEXT DEFAULT CURRENT_TIMESTAMP
+    `CREATE TABLE IF NOT EXISTS salesmen (
+    salesmen_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL ,
+    phn_no INTEGER NOT NULL default 0,
+    address TEXT
 );`
   );
   db.run(
-    `CREATE TABLE IF NOT EXISTS transactions (
-    transaction_id TEXT PRIMARY KEY,
-    transaction_type TEXT NOT NULL,
-    customer_name TEXT NOT NULL ,
-    total_price REAL NOT NULL,
-    discount REAL DEFAULT 0,
-    date_time TEXT DEFAULT CURRENT_TIMESTAMP
+    `CREATE TABLE IF NOT EXISTS customers (
+    customer_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL ,
+    phn_no INTEGER NOT NULL default 0,
+    address TEXT
 );`
   );
 };
 createTable();
 
+const customerExists = (name) => {
+  return new Promise((resolve, reject) => {
+    createTable();
+    const query = "SELECT id FROM customers WHERE name = ? LIMIT 1;";
+
+    db.get(query, [product.name, product.quantity, product.measuringUnit], (err, row) => {
+      if (err) {
+        console.error(" Error:", err.message);
+        reject(err);
+      } else {
+        resolve(row); // Returns true if row exists, else false
+      }
+    });
+  });
+};
+const salesmenExists = () => {};
+
 const insertData = (product, log) => {
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
     const transactionId = v4();
+    let customerId = v4();
+    let salesmenId = v4();
 
     db.serialize(() => {
       // Insert transaction record
       const date = new Date();
-      let totalPrice = 0;
-      if (Array.isArray(product)) {
-        for (let i = 0; i < product.length; i++) {
-          totalPrice += Number(product[i].items) * product[i].sellingPrice;
-        }
-      } else {
-        totalPrice += Number(product.items) * product.sellingPrice;
-      }
-      const sql1 = `INSERT INTO transactions (transaction_id, transaction_type, customer_name, total_price, discount, date_time) VALUES (?, ?, ?, ?, ?, ?)`;
 
       db.run("BEGIN TRANSACTION;");
-      db.run(sql1, [transactionId, log.type, log.customerName, totalPrice, log?.discount ?? 0, date.toLocaleString()], function (err) {
-        if (err) {
-          console.log(err);
-          db.run("ROLLBACK;");
-          return reject({ success: false, message: "Transaction not inserted: " + err.message });
-        }
-      });
+      if (log.type != "restock") {
+        const sql1 = "INSERT INTO salesmen (salesmen_id, name, phn_no, address) VALUES(?, ?, ?, ?)";
+        db.run(
+          sql1,
+          [salesmenId, log.personDetails.salesmenName, log.personDetails.salesmenPhnNo, log.personDetails.salesmenAddress],
+          function (err) {
+            if (err) {
+              console.log(err);
+              db.run("ROLLBACK;");
+              return reject({ success: false, message: "Transaction not inserted: " + err.message });
+            }
+          }
+        );
+
+        const sql2 = "INSERT INTO customers (customer_id, name, phn_no, address) VALUES(?, ?, ?, ?)";
+        db.run(
+          sql2,
+          [customerId, log.personDetails.customerName, log.personDetails.customerPhnNo, log.personDetails.customerAddress],
+          function (err) {
+            if (err) {
+              console.log(err);
+              db.run("ROLLBACK;");
+              return reject({ success: false, message: "Transaction not inserted: " + err.message });
+            }
+          }
+        );
+
+        const sql3 = `INSERT INTO transactions (transaction_id, transaction_type, customer_id, salesmen_id, discount, date_time) VALUES (?, ?, ?, ?, ?, ?)`;
+        db.run(sql3, [transactionId, log.type, customerId, salesmenId, log?.discount ?? 0, date.toLocaleString()], function (err) {
+          if (err) {
+            console.log(err);
+            db.run("ROLLBACK;");
+            return reject({ success: false, message: "Transaction not inserted: " + err.message });
+          }
+        });
+      } else {
+        const sql3 = `INSERT INTO transactions (transaction_id, transaction_type, date_time) VALUES (?, ?, ?)`;
+        db.run(sql3, [transactionId, log.type, date.toLocaleString()], function (err) {
+          if (err) {
+            console.log(err);
+            db.run("ROLLBACK;");
+            return reject({ success: false, message: "Transaction not inserted: " + err.message });
+          }
+        });
+      }
 
       // Insert sales log
       if (Array.isArray(product)) {

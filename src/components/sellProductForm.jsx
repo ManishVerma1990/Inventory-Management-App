@@ -23,7 +23,7 @@ function SellProductForm() {
   const [alert, setAlert] = useState({});
   const [showPreview, setShowPreview] = useState(false);
 
-  const sendFormData = async (customerName, discount) => {
+  const sendFormData = async (personDetails, discount) => {
     setProducts([
       {
         name: "",
@@ -45,7 +45,7 @@ function SellProductForm() {
     setShowAlert(true);
     setAlert(result);
     setTimeout(() => setShowAlert(false), 3000);
-    await window.api.logs("post", products, { type: "sale", customerName: customerName, discount: discount });
+    await window.api.logs("post", products, { type: "sale", personDetails: personDetails, discount: discount });
   };
 
   const handleChange = async (index, e) => {
@@ -105,7 +105,7 @@ function SellProductForm() {
     );
   };
 
-  const handleSubmit = (e, cutomerName = "none", discount = 0) => {
+  const handleSubmit = (e, personDetails = {}, discount = 0) => {
     e.preventDefault();
     let newErrors = {};
     let hasStockError = false;
@@ -132,7 +132,7 @@ function SellProductForm() {
       return;
     }
     if (!hasStockError) {
-      sendFormData(cutomerName, discount);
+      sendFormData(personDetails, discount);
     }
   };
 
@@ -289,7 +289,11 @@ function SellProductForm() {
         <button type="button" className="btn btn-primary" onClick={addProductField}>
           Add More
         </button>
-        <button type="button" className="btn btn-outline-primary mx-2" onClick={() => setShowPreview(true)}>
+        <button
+          type="button"
+          className={`btn btn-outline-primary mx-2 ${products[0].quantity === "" ? "disabled" : ""}`}
+          onClick={() => setShowPreview(true)}
+        >
           Sell Items
         </button>
       </div>

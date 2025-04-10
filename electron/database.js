@@ -2,9 +2,10 @@ const { app, ipcMain } = require("electron");
 const path = require("path");
 const sqlite3 = require("@journeyapps/sqlcipher").verbose();
 const dbTest = require("./dbTest");
-const productsModel = require("./productsModel");
-const transactionModel = require("./transactionModel");
-// dbTest();
+const productsModel = require("./models/productsModel");
+const transactionModel = require("./models/transactionModel");
+// const controller = require("./controller");
+dbTest();
 
 // Define database path
 const dbPath = path.join(app.getPath("userData"), "inventory_encrypted.db");
@@ -18,7 +19,7 @@ function toLowerCaseObject(obj) {
 }
 
 // IPC Handler for "product"
-ipcMain.handle("product", async (event, action, data = {}) => {
+ipcMain.handle("product", async (event, action, data = {}, salsemenData = {}) => {
   try {
     productsModel.createTable();
     let product = {};
@@ -57,13 +58,13 @@ ipcMain.handle("product", async (event, action, data = {}) => {
           }
         } else {
           // for creating and stocking new product
-
           try {
             let result = await productsModel.insertData(product);
             const result2 = await transactionModel.insertData(product, {
               type: "restock",
               id: await result.id,
-              customerName: "none",
+              customerId: "0",
+              salesmenId: "0",
             });
 
             if (result && result.success) {

@@ -4,7 +4,7 @@ module.exports = () => {
   const { app } = require("electron");
   const path = require("path");
   const sqlite3 = require("@journeyapps/sqlcipher").verbose();
-  const { createTable, fetchData, fetchAllData } = require("./productsModel");
+  const { createTable, fetchData, fetchAllData } = require("./models/productsModel");
   // const createTable = require("./transactionModel");
   const closeConn = () => {
     // Close the database connection properly
@@ -48,8 +48,7 @@ module.exports = () => {
       console.log(" Table Structure (transactions):", rows);
       closeConn();
     });
-    db.run("PRAGMA key = 'Ma@7974561017';");
-    db.all("PRAGMA table_info(products);", [], (err, rows) => {
+    db.all("PRAGMA table_info(sales_log);", [], (err, rows) => {
       if (err) {
         console.error(" Error fetching table structure:", err.message);
         closeConn();
@@ -57,6 +56,26 @@ module.exports = () => {
       }
       const names = rows.map((u) => u.name);
       console.log(" Table Structure:(sales_log)", rows);
+      closeConn();
+    });
+    db.all("PRAGMA table_info(salesmen);", [], (err, rows) => {
+      if (err) {
+        console.error(" Error fetching table structure:", err.message);
+        closeConn();
+        return;
+      }
+      const names = rows.map((u) => u.name);
+      console.log(" Table Structure:(salesmen)", rows);
+      closeConn();
+    });
+    db.all("PRAGMA table_info(customers);", [], (err, rows) => {
+      if (err) {
+        console.error(" Error fetching table structure:", err.message);
+        closeConn();
+        return;
+      }
+      const names = rows.map((u) => u.name);
+      console.log(" Table Structure:(customers)", rows);
       closeConn();
     });
   };
@@ -71,11 +90,10 @@ module.exports = () => {
       console.log(" Encryption key set.");
     });
     let limit = 100;
-    db.all("SELECT * FROM products LIMIT ?", [limit], (err, rows) => {
+    db.all("SELECT * FROM salesmen LIMIT ?", [limit], (err, rows) => {
       if (err) throw err;
       console.log(rows);
     });
-
     // tableInfo();
   });
 };

@@ -195,28 +195,18 @@ function AddStockForm() {
             </div>
           </div>
           <div className="col">
-            <div className="input-group">
-              <div className=" col ">
-                <select
-                  onChange={handleChange}
-                  value={formData.commission}
-                  style={{ height: "3.6rem" }}
-                  className={`form-select form-select ${errors.commission ? "is-invalid" : formData.commission ? "is-valid" : ""}`}
-                  aria-label="Default select example"
-                  name="commission"
-                >
-                  <option defaultValue={"commission"}>gst</option>
-                  <option value="18">18</option>
-                  <option value="12">12</option>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                </select>
-                {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
-              </div>
-              <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
-                &nbsp; % &nbsp;{" "}
-              </span>
+            <div className="form-floating">
+              <input
+                onChange={handleChange}
+                value={formData.commission}
+                type="number"
+                className={`form-control ${errors.commission ? "is-invalid" : formData.commission ? "is-valid" : ""}`}
+                id="commisson"
+                placeholder="commission to be added"
+                name="commission"
+              />
+              <label htmlFor="commission">Commission</label>
+              {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
             </div>
           </div>
         </div>
