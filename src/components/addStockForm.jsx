@@ -3,7 +3,7 @@ import Suggestions from "./suggestions";
 import Alert from "./alert";
 
 function AddStockForm() {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     quantity: "",
     measuringUnit: "",
@@ -12,8 +12,10 @@ function AddStockForm() {
     items: "",
     costPrice: "",
     sellingPrice: "",
-    tax: "",
-  });
+    commission: "",
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [values, setValues] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -21,17 +23,7 @@ function AddStockForm() {
   const [alert, setAlert] = useState({});
 
   const sendFormData = async () => {
-    setFormData({
-      name: "",
-      quantity: "",
-      measuringUnit: "",
-      description: "",
-      category: "",
-      items: "",
-      costPrice: "",
-      sellingPrice: "",
-      tax: "",
-    });
+    setFormData(initialFormData);
     const result = await window.api.product("post", formData);
     setShowAlert(true);
     setAlert(result);
@@ -68,7 +60,7 @@ function AddStockForm() {
       items: 0,
       costPrice: data.cost_price,
       sellingPrice: data.selling_price,
-      tax: data.tax,
+      commission: data.commission,
     });
     setShowSuggestions(false);
   };
@@ -80,9 +72,9 @@ function AddStockForm() {
     if (!String(formData.quantity).trim()) newErrors.quantity = "Quantity is required";
     if (!formData.measuringUnit.trim()) newErrors.measuringUnit = "unit is required";
     if (!String(formData.items).trim()) newErrors.items = "Items is required";
-    if (!String(formData.price).trim()) newErrors.costPrice = "Price is required";
-    if (!String(formData.price).trim()) newErrors.sellingPrice = "Price is required";
-    if (!String(formData.price).trim()) newErrors.tax = "Price is required";
+    if (!String(formData.costPrice).trim()) newErrors.costPrice = "Cost price is required";
+    if (!String(formData.sellingPrice).trim()) newErrors.sellingPrice = "selling price is required";
+    if (!String(formData.commission).trim()) newErrors.tax = "Commission is required";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -207,20 +199,20 @@ function AddStockForm() {
               <div className=" col ">
                 <select
                   onChange={handleChange}
-                  value={formData.tax}
+                  value={formData.commission}
                   style={{ height: "3.6rem" }}
-                  className={`form-select form-select ${errors.tax ? "is-invalid" : formData.tax ? "is-valid" : ""}`}
+                  className={`form-select form-select ${errors.commission ? "is-invalid" : formData.commission ? "is-valid" : ""}`}
                   aria-label="Default select example"
-                  name="tax"
+                  name="commission"
                 >
-                  <option defaultValue={"tax"}>gst</option>
+                  <option defaultValue={"commission"}>gst</option>
                   <option value="18">18</option>
                   <option value="12">12</option>
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="25">25</option>
                 </select>
-                {errors.tax && <div className="invalid-feedback">{errors.tax}</div>}
+                {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
               </div>
               <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
                 &nbsp; % &nbsp;{" "}

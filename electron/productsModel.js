@@ -17,8 +17,8 @@ const createTable = () => {
         stock_quantity INTEGER NOT NULL,
         cost_price INTEGER NOT NULL,
         selling_price INTEGER NOT NULL ,
-        tax INTEGER NOT NULL,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        commission INTEGER NOT NULL, 
+        created_at TEXT NOT NULL
       );`
   );
 };
@@ -30,7 +30,7 @@ const insertData = (product) => {
   return new Promise((resolve, reject) => {
     // Set encryption key for reading data
     db.run("PRAGMA key = 'Ma@7974561017';");
-    const sql = `INSERT INTO products (name, description, category, product_quantity, measuring_unit, stock_quantity, cost_price, selling_price, tax, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO products (name, description, category, product_quantity, measuring_unit, stock_quantity, cost_price, selling_price, commission, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const date = new Date();
     db.run(
       sql,
@@ -43,7 +43,7 @@ const insertData = (product) => {
         product.items,
         product.costPrice,
         product.sellingPrice,
-        product.tax,
+        product.commission,
         date.toLocaleString(),
       ],
       function (err) {

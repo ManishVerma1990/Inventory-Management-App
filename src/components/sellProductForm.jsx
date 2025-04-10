@@ -11,7 +11,7 @@ function SellProductForm() {
       measuringUnit: "",
       items: "",
       sellingPrice: "",
-      tax: "",
+      commission: "",
       stock_quantity: "",
       showSuggestions: false,
       showStock: false,
@@ -25,7 +25,16 @@ function SellProductForm() {
 
   const sendFormData = async (customerName, discount) => {
     setProducts([
-      { name: "", quantity: "", measuringUnit: "", items: "", sellingPrice: "", tax: "", stock_quantity: "", showSuggestions: false },
+      {
+        name: "",
+        quantity: "",
+        measuringUnit: "",
+        items: "",
+        sellingPrice: "",
+        commission: "",
+        stock_quantity: "",
+        showSuggestions: false,
+      },
     ]);
     const updatedProducts = products.map((product) => ({
       ...product,
@@ -36,7 +45,6 @@ function SellProductForm() {
     setShowAlert(true);
     setAlert(result);
     setTimeout(() => setShowAlert(false), 3000);
-    console.log(products);
     await window.api.logs("post", products, { type: "sale", customerName: customerName, discount: discount });
   };
 
@@ -87,7 +95,7 @@ function SellProductForm() {
               measuringUnit: data.measuring_unit,
               items: 0,
               sellingPrice: data.selling_price,
-              tax: data.tax,
+              commission: data.commission,
               stock_quantity: data.stock_quantity,
               showSuggestions: false,
               showStock: true,
@@ -107,7 +115,7 @@ function SellProductForm() {
       if (!String(product.quantity).trim()) newErrors[`quantity-${index}`] = "Quantity is required";
       if (!String(product.items).trim()) newErrors[`items-${index}`] = "Items is required";
       if (!String(product.sellingPrice).trim()) newErrors[`price-${index}`] = "Price is required";
-      if (!String(product.tax).trim()) newErrors[`price-${index}`] = "Price is required";
+      if (!String(product.commission).trim()) newErrors[`price-${index}`] = "Commission is required";
 
       // Check if stock is less than requested items
       if (Number(product.items) > Number(product.stock_quantity)) {
@@ -137,6 +145,7 @@ function SellProductForm() {
         measuringUnit: "",
         items: "",
         sellingPrice: "",
+        commission: "",
         stock_quantity: "",
         showSuggestions: false,
         showStock: false,

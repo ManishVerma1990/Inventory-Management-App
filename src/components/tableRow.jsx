@@ -18,7 +18,7 @@ function TableRow(props) {
         </td>
         <td>{props.product.selling_price}</td>
         <td>{props.product.stock_quantity}</td>
-        <td>{props.product.tax}</td>
+        <td>{props.product.commission}</td>
       </tr>
 
       <tr>

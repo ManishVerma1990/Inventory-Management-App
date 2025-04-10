@@ -30,6 +30,26 @@ const createTable = () => {
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 );`
   );
+  db.run(
+    `CREATE TABLE IF NOT EXISTS transactions (
+    transaction_id TEXT PRIMARY KEY,
+    transaction_type TEXT NOT NULL,
+    customer_name TEXT NOT NULL ,
+    total_price REAL NOT NULL,
+    discount REAL DEFAULT 0,
+    date_time TEXT DEFAULT CURRENT_TIMESTAMP
+);`
+  );
+  db.run(
+    `CREATE TABLE IF NOT EXISTS transactions (
+    transaction_id TEXT PRIMARY KEY,
+    transaction_type TEXT NOT NULL,
+    customer_name TEXT NOT NULL ,
+    total_price REAL NOT NULL,
+    discount REAL DEFAULT 0,
+    date_time TEXT DEFAULT CURRENT_TIMESTAMP
+);`
+  );
 };
 createTable();
 
