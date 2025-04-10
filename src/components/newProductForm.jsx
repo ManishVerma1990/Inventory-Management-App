@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Suggestions from "./suggestions";
 import Alert from "./alert";
 
-function AddStockForm() {
+function NewProductForm() {
   const initialFormData = {
     name: "",
     quantity: "",
@@ -13,6 +13,7 @@ function AddStockForm() {
     costPrice: "",
     sellingPrice: "",
     commission: "",
+    minStock: "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -61,6 +62,7 @@ function AddStockForm() {
       costPrice: data.cost_price,
       sellingPrice: data.selling_price,
       commission: data.commission,
+      minStock: data.min_stock,
     });
     setShowSuggestions(false);
   };
@@ -74,7 +76,8 @@ function AddStockForm() {
     if (!String(formData.items).trim()) newErrors.items = "Items is required";
     if (!String(formData.costPrice).trim()) newErrors.costPrice = "Cost price is required";
     if (!String(formData.sellingPrice).trim()) newErrors.sellingPrice = "selling price is required";
-    if (!String(formData.commission).trim()) newErrors.tax = "Commission is required";
+    if (!String(formData.commission).trim()) newErrors.commission = "Commission is required";
+    if (!String(formData.minStock).trim()) newErrors.minStock = "Minimun stock no. is required";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -195,22 +198,27 @@ function AddStockForm() {
             </div>
           </div>
           <div className="col">
-            <div className="form-floating">
-              <input
-                onChange={handleChange}
-                value={formData.commission}
-                type="number"
-                className={`form-control ${errors.commission ? "is-invalid" : formData.commission ? "is-valid" : ""}`}
-                id="commisson"
-                placeholder="commission to be added"
-                name="commission"
-              />
-              <label htmlFor="commission">Commission</label>
-              {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
+            <div className="input-group">
+              <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
+                &nbsp; &#x20B9; &nbsp;{" "}
+              </span>
+              <div className="form-floating">
+                <input
+                  onChange={handleChange}
+                  value={formData.commission}
+                  type="number"
+                  className={`form-control ${errors.commission ? "is-invalid" : formData.commission ? "is-valid" : ""}`}
+                  id="commisson"
+                  placeholder="commission to be added"
+                  name="commission"
+                />
+                <label htmlFor="commission">Commission</label>
+                {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
+              </div>
             </div>
           </div>
         </div>
-        <div className="row">
+        <div className="row mb-3">
           <div className="col">
             <div className="input-group">
               <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
@@ -252,6 +260,23 @@ function AddStockForm() {
             </div>
           </div>
         </div>
+        <div className="row mb-3">
+          <div className="col-6">
+            <div className="form-floating">
+              <input
+                onChange={handleChange}
+                value={formData.minStock}
+                type="number"
+                className={`form-control ${errors.minStock ? "is-invalid" : formData.minStock ? "is-valid" : ""}`}
+                id="minStock"
+                placeholder="minStock to be added"
+                name="minStock"
+              />
+              <label htmlFor="minStock">minStock</label>
+              {errors.minStock && <div className="invalid-feedback">{errors.minStock}</div>}
+            </div>
+          </div>
+        </div>
       </form>
       <div className="mt-3">
         <button onClick={handleSubmit} className="btn btn-primary ">
@@ -261,5 +286,5 @@ function AddStockForm() {
     </div>
   );
 }
-export default AddStockForm;
+export default NewProductForm;
 // products -> id, name,description, category, product_quantity(1 unit), stock_quantity, price, created_at, updated_at

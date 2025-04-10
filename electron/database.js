@@ -5,7 +5,7 @@ const dbTest = require("./dbTest");
 const productsModel = require("./models/productsModel");
 const transactionModel = require("./models/transactionModel");
 // const controller = require("./controller");
-dbTest();
+// dbTest();
 
 // Define database path
 const dbPath = path.join(app.getPath("userData"), "inventory_encrypted.db");
@@ -107,7 +107,11 @@ ipcMain.handle("product", async (event, action, data = {}, salsemenData = {}) =>
         if (failedProducts.length > 0) {
           return { success: false, message: `Some products failed: ${JSON.stringify(failedProducts)}` };
         } else {
-          return { success: true, message: `${successCount} items sold successfully` };
+          return {
+            success: true,
+            message:
+              Number(data[0].items) > 0 ? `${successCount} items restocked successfully` : `${successCount} items sold successfully`,
+          };
         }
         break;
       default:

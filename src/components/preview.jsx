@@ -194,7 +194,7 @@ const Preview = ({ products, handleSubmit, setShowPreview }) => {
               handleSubmit(e, personDetails, discount);
             }}
           >
-            submit
+            Sell
           </button>
         </div>
       </div>
