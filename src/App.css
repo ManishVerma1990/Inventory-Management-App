@@ -15,7 +15,8 @@ a {
 :root {
   padding: 0;
   margin: 0;
-  /* overflow-x: hidden; */
+  --primary-color: #006241;
+  --secondary-color: #efefef;
 }
 html,
 body {
@@ -50,35 +51,41 @@ body {
 }
 .sidebar {
   display: block;
-  min-width: 150px;
-  background-color: #0f4d0f;
+  min-width: 200px;
+  background-color: var(--primary-color);
   height: 100vh;
   position: sticky !important;
+}
+.sidebar .logo {
+  text-align: center;
+  color: white;
+  font-size: 2rem;
 }
 .brandname {
   padding: 0.5rem 0.5rem;
   text-align: center;
   color: white;
-  border-bottom: 1px solid white;
 }
 
 .sidebar .nav {
   margin-top: 0.5rem;
-  padding: 0.5rem 0;
+  padding: 0.35rem;
   display: block;
 }
 
 .sidebar .nav .nav-item {
   display: flex;
   align-items: center;
-  padding: 10px;
-  color: white;
+  padding: 8px 10px;
+  margin: 0.5rem 0;
+  color: rgb(255, 255, 255);
+  border-radius: 5px;
   text-decoration: none;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 .nav-item.active {
-  background-color: white; /* Change background when active */
-  color: green !important; /* Change text color when active */
+  background-color: rgba(255, 255, 255, 0.174); /* Change background when active */
+  /* color: green !important; Change text color when active */
 }
 .sidebar .nav .nav-item li {
   display: flex;
@@ -98,11 +105,13 @@ body {
   height: 100vh;
 }
 .header {
+  background-color: var(--secondary-color);
   padding: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0px 2px 10px -5px rgb(176, 176, 176);
+  box-shadow: 5px 2px 8px -5px rgb(69, 69, 69);
+  z-index: 1;
 }
 .header .clock {
   font-size: 1.15rem;
@@ -113,6 +122,7 @@ main {
   overflow-y: auto;
   flex: 1;
   padding: 0.5rem;
+  background-color: var(--secondary-color);
 }
 .form-floating input[list]::after {
   content: none !important;

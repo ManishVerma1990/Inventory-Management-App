@@ -6,6 +6,8 @@ import Reports from "../tabs/reports";
 import NewProductForm from "../components/newProductForm";
 import SellProductForm from "../components/sellProductForm";
 import ReStockForm from "../components/reStockForm";
+import Salesmen from "../components/salesmen";
+import NewSalesmen from "../components/newSalesmen";
 
 function Body() {
   return (
@@ -15,9 +17,11 @@ function Body() {
         <Route path="/newProduct" element={<NewProductForm />} />
         <Route path="/sellProduct" element={<SellProductForm />} />
         <Route path="/reStock" element={<ReStockForm />} />
-        <Route path="/inventory" element={<Inventory />} />
+        <Route path="/stocks" element={<Inventory />} />
         <Route path="/sales" element={<Sales />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/salesmen" element={<Salesmen />} />
+        <Route path="/salesmen/new" element={<NewSalesmen />} />
       </Routes>
     </main>
   );

@@ -54,9 +54,9 @@ createTable();
 const customerExists = (name) => {
   return new Promise((resolve, reject) => {
     createTable();
-    const query = "SELECT id FROM customers WHERE name = ? LIMIT 1;";
+    const query = "SELECT customer_id FROM customers WHERE name = ? LIMIT 1;";
 
-    db.get(query, [product.name, product.quantity, product.measuringUnit], (err, row) => {
+    db.get(query, [name], (err, row) => {
       if (err) {
         console.error(" Error:", err.message);
         reject(err);
@@ -66,46 +66,62 @@ const customerExists = (name) => {
     });
   });
 };
-const salesmenExists = () => {};
 
-const insertData = (product, log) => {
+const salesmenExists = (name) => {
+  return new Promise((resolve, reject) => {
+    createTable();
+    const query = "SELECT salesmen_id FROM salesmen WHERE name = ? LIMIT 1;";
+
+    db.get(query, [name], (err, row) => {
+      if (err) {
+        console.error(" Error:", err.message);
+        reject(err);
+      } else {
+        resolve(row); // Returns true if row exists, else false
+      }
+    });
+  });
+};
+
+const insertData = async (product, log) => {
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
     const transactionId = v4();
-    let customerId = v4();
-    let salesmenId = v4();
 
-    db.serialize(() => {
+    db.serialize(async () => {
       // Insert transaction record
       const date = new Date();
-
       db.run("BEGIN TRANSACTION;");
       if (log.type != "restock") {
-        const sql1 = "INSERT INTO salesmen (salesmen_id, name, phn_no, address) VALUES(?, ?, ?, ?)";
-        db.run(
-          sql1,
-          [salesmenId, log.personDetails.salesmenName, log.personDetails.salesmenPhnNo, log.personDetails.salesmenAddress],
-          function (err) {
-            if (err) {
-              console.log(err);
-              db.run("ROLLBACK;");
-              return reject({ success: false, message: "Transaction not inserted: " + err.message });
-            }
-          }
-        );
+        let customerId;
+        let salesmenId;
+        try {
+          //does exist check
+          customerId = await customerExists(log.personDetails.customerName);
+          salesmenId = await salesmenExists(log.personDetails.salesmenName);
+        } catch (err) {
+          console.log(err);
+        }
 
-        const sql2 = "INSERT INTO customers (customer_id, name, phn_no, address) VALUES(?, ?, ?, ?)";
-        db.run(
-          sql2,
-          [customerId, log.personDetails.customerName, log.personDetails.customerPhnNo, log.personDetails.customerAddress],
-          function (err) {
-            if (err) {
-              console.log(err);
-              db.run("ROLLBACK;");
-              return reject({ success: false, message: "Transaction not inserted: " + err.message });
+        // if (!salesmenId)
+        //   return reject({ success: false, message: "Salesmen doesn't exist with name: " + log.personDetails.salesmenName });
+
+        if (!customerId) {
+          //if doesnt exist create new id
+          customerId = v4();
+          const sql2 = "INSERT INTO customers (customer_id, name, phn_no, address) VALUES(?, ?, ?, ?)";
+          db.run(
+            sql2,
+            [customerId, log.personDetails.customerName, log.personDetails.customerPhnNo, log.personDetails.customerAddress],
+            function (err) {
+              if (err) {
+                console.log(err);
+                db.run("ROLLBACK;");
+                return reject({ success: false, message: "Transaction not inserted: " + err.message });
+              }
             }
-          }
-        );
+          );
+        }
 
         const sql3 = `INSERT INTO transactions (transaction_id, transaction_type, customer_id, salesmen_id, discount, date_time) VALUES (?, ?, ?, ?, ?, ?)`;
         db.run(sql3, [transactionId, log.type, customerId, salesmenId, log?.discount ?? 0, date.toLocaleString()], function (err) {
@@ -197,4 +213,73 @@ const fetchLogsByTransacton = (transaction_id) => {
   });
 };
 
-module.exports = { createTable, insertData, fetchAllTransactions, fetchAllLogs, fetchLogsByTransacton };
+//for suggestion
+const fetchCustomerData = (value, limit = 8) => {
+  return new Promise((resolve, reject) => {
+    // Set encryption key for reading data
+    db.run("PRAGMA key = 'Ma@7974561017';");
+    createTable();
+
+    const safeLimit = Number.isInteger(limit) ? limit : 8;
+    const query = `SELECT customer_id, name, phn_no, address FROM customers WHERE name LIKE ? LIMIT ${safeLimit}`;
+
+    db.all(query, [`%${value}%`], (err, rows) => {
+      if (err) {
+        reject(err); // Reject promise if error occurs
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
+//for suggestions
+const fetchSalesmenData = (value, limit = 8) => {
+  return new Promise((resolve, reject) => {
+    // Set encryption key for reading data
+    db.run("PRAGMA key = 'Ma@7974561017';");
+    createTable();
+
+    const safeLimit = Number.isInteger(limit) ? limit : 8;
+    const query = `SELECT salesmen_id, name, phn_no, address FROM salesmen WHERE name LIKE ? LIMIT ${safeLimit}`;
+
+    db.all(query, [`%${value}%`], (err, rows) => {
+      if (err) {
+        reject(err); // Reject promise if error occurs
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
+const newSalesmen = (data) => {
+  return new Promise(async (resolve, reject) => {
+    // Set encryption key for reading data
+    db.run("PRAGMA key = 'Ma@7974561017';");
+    createTable();
+
+    if (await salesmenExists(data.name)) {
+      reject({ success: false, message: "Salesmen alerady exists! " });
+    }
+    const query = `INSERT INTO salesmen (name, phn_no, address) VALUES (?, ?, ?);`;
+    db.run(query, [data.name, data.phnNo, data.address], (err, rows) => {
+      if (err) {
+        reject({ success: false, message: "Salesmen not inserted: " + err.message }); // Reject promise if error occurs
+      } else {
+        resolve({ success: true, message: `Salesmen inserted successfully: : ${data.name}` });
+      }
+    });
+  });
+};
+
+module.exports = {
+  createTable,
+  insertData,
+  fetchAllTransactions,
+  fetchAllLogs,
+  fetchLogsByTransacton,
+  fetchCustomerData,
+  fetchSalesmenData,
+  newSalesmen,
+};

@@ -36,7 +36,7 @@ function SearchBox() {
         <input
           id="search"
           type="text"
-          className="form-control"
+          className="form-control "
           onChange={handleChange}
           value={searchBox}
           placeholder="Search"

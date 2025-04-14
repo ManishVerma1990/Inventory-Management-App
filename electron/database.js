@@ -155,12 +155,26 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
       case "post":
         const result = await transactionModel.insertData(data, log);
         break;
+
+      case "newSalesmen":
+        return await transactionModel.newSalesmen(data);
+        break;
+      case "getSalesmen":
+        console.log("getsalesmen");
+        break;
+
+      //for autofill
+      case "getCustomerSuggestions":
+        return await transactionModel.fetchCustomerData(data);
+      case "getSalesmenSuggestions":
+        return await transactionModel.fetchSalesmenData(data);
+
       default:
         throw new Error(`Invalid action: ${action}`);
     }
   } catch (error) {
     console.error("Error in 'logs' handler:", error);
-    return { success: false, error: error.message };
+    return { success: false, message: error.message };
   }
 });
 

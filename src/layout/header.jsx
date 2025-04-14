@@ -9,8 +9,8 @@ function Header() {
       case "/":
         name = "Home";
         break;
-      case "/inventory":
-        name = "Inventory";
+      case "/stocks":
+        name = "Stocks";
         break;
       case "/sales":
         name = "Sales";
@@ -18,12 +18,18 @@ function Header() {
       case "/reports":
         name = "Reports";
         break;
-      case "/addStock":
-        name = "Add Stock";
+      case "/newProduct":
+        name = "New Product";
         break;
       case "/sellProduct":
         name = "Sell Product";
         break;
+      case "/salesmen":
+        name = "Salesmen";
+      case "/reStock":
+        name = "Restock";
+      case "/salesmen/new":
+        name = "New Salesmen";
     }
     return name;
   };

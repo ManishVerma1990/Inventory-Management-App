@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Suggestions from "./suggestions";
 
 const Preview = ({ products, handleSubmit, setShowPreview }) => {
   const [personDetails, setPersonDetails] = useState({
@@ -10,15 +11,57 @@ const Preview = ({ products, handleSubmit, setShowPreview }) => {
     salesmenAddress: "",
   });
   const [discount, setDiscount] = useState(0);
+  const [showSalesmenSuggestions, setShowSalesmenSuggestions] = useState(false);
+  const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
+  const [values, setValues] = useState([]);
 
-  const handleChange = (e, values) => {
+  const handleChange = async (e, values) => {
     setPersonDetails({ ...personDetails, [e.target.name]: e.target.value });
     // setErrors({ ...errors, [e.target.name]: "" });
-    // if (e.target.name === "name") {
-    // const personDetails = await window.api.product("getSuggestions", e.target.value);
-    // setValues(personDetails);
-    // autofill(e, personDetails);
-    // }
+    if (e.target.name === "salesmenName") {
+      const data = await window.api.logs("getSalesmenSuggestions", e.target.value);
+      setValues(data);
+      autofill1(e, data);
+    }
+    if (e.target.name === "customerName") {
+      const data = await window.api.logs("getCustomerSuggestions", e.target.value);
+      setValues(data);
+      autofill2(e, data);
+    }
+  };
+
+  const autofill1 = (e, data) => {
+    if (e.target.value.trim() === "" || !data.length) {
+      setShowSalesmenSuggestions(false);
+    } else {
+      setShowSalesmenSuggestions(true);
+    }
+  };
+  const handleListClick1 = async (value) => {
+    setPersonDetails({
+      ...personDetails,
+      salesmenName: value.name,
+    });
+    setShowSalesmenSuggestions(false);
+  };
+
+  const autofill2 = (e, data) => {
+    if (e.target.value.trim() === "" || !data.length) {
+      setShowCustomerSuggestions(false);
+    } else {
+      setShowCustomerSuggestions(true);
+    }
+  };
+
+  const handleListClick2 = async (value) => {
+    console.log(value);
+    setPersonDetails({
+      ...personDetails,
+      customerName: value.name,
+      customerPhnNo: value.phn_no,
+      customerAddress: value.address,
+    });
+    setShowCustomerSuggestions(false);
   };
 
   let total = 0;
@@ -73,6 +116,7 @@ const Preview = ({ products, handleSubmit, setShowPreview }) => {
                 name="customerName"
               />
               <label htmlFor="cutomerName">Customer name</label>
+              {showCustomerSuggestions ? <Suggestions values={values} callback={handleListClick2} /> : ""}
             </div>
           </div>
           <div className="col-4">
@@ -119,7 +163,7 @@ const Preview = ({ products, handleSubmit, setShowPreview }) => {
           </div> */}
         </div>
         <div className="row">
-          <div className="col-4">
+          <div className="col">
             <div className="form-floating mb-3">
               <input
                 type="text"
@@ -131,36 +175,10 @@ const Preview = ({ products, handleSubmit, setShowPreview }) => {
                 name="salesmenName"
               />
               <label htmlFor="salesmenName">salesmen name</label>
+              {showSalesmenSuggestions ? <Suggestions values={values} callback={handleListClick1} /> : ""}
             </div>
           </div>
-          <div className="col-4">
-            <div className="form-floating mb-3">
-              <input
-                type="number"
-                className="form-control"
-                id="salesmenPhnNo"
-                placeholder="phone number"
-                onChange={handleChange}
-                value={personDetails.salesmenPhnNo}
-                name="salesmenPhnNo"
-              />
-              <label htmlFor="salesmenPhnNo">Phone No.</label>
-            </div>
-          </div>
-          <div className="col-4">
-            <div className="form-floating mb-3">
-              <input
-                type="text"
-                className="form-control"
-                id="salesmenName"
-                placeholder="Address"
-                onChange={handleChange}
-                value={personDetails.salesmenAddress}
-                name="salesmenAddress"
-              />
-              <label htmlFor="salesmenAddress">Address</label>
-            </div>
-          </div>
+
           {/* <div className="col-6">
             <div className="form-floating">
               <input

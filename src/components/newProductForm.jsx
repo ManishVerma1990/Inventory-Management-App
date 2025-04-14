@@ -48,6 +48,7 @@ function NewProductForm() {
       autofill(e, data);
     }
   };
+
   const handleListClick = async (value) => {
     const data = await window.api.product("getOne", value.id);
     setFormData({

@@ -15,7 +15,8 @@ function Inventory() {
     };
 
     getData();
-  }, []); // No need for `gotData`
+  }, []);
+
   return (
     <div className="container pt-2 shadow">
       <div className="mb-3">
