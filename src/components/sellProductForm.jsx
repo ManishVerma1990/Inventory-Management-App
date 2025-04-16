@@ -24,28 +24,31 @@ function SellProductForm() {
   const [showPreview, setShowPreview] = useState(false);
 
   const sendFormData = async (personDetails, discount) => {
-    setProducts([
-      {
-        name: "",
-        quantity: "",
-        measuringUnit: "",
-        items: "",
-        sellingPrice: "",
-        commission: "",
-        stock_quantity: "",
-        showSuggestions: false,
-      },
-    ]);
     const updatedProducts = products.map((product) => ({
       ...product,
       items: (-Math.abs(Number(product.items))).toString(), // Convert items to negative
     }));
-    const result = await window.api.product("put", updatedProducts);
+    const result = await window.api.product("put", updatedProducts, personDetails.salesmenName /* sending this to check if exists */);
+
+    if (result.success) {
+      setProducts([
+        {
+          name: "",
+          quantity: "",
+          measuringUnit: "",
+          items: "",
+          sellingPrice: "",
+          commission: "",
+          stock_quantity: "",
+          showSuggestions: false,
+        },
+      ]);
+      await window.api.logs("post", products, { type: "sale", personDetails: personDetails, discount: discount });
+    }
 
     setShowAlert(true);
     setAlert(result);
     setTimeout(() => setShowAlert(false), 3000);
-    await window.api.logs("post", products, { type: "sale", personDetails: personDetails, discount: discount });
   };
 
   const handleChange = async (index, e) => {

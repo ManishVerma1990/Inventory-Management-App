@@ -61,7 +61,7 @@ const customerExists = (name) => {
         console.error(" Error:", err.message);
         reject(err);
       } else {
-        resolve(row); // Returns true if row exists, else false
+        resolve(row);
       }
     });
   });
@@ -77,7 +77,7 @@ const salesmenExists = (name) => {
         console.error(" Error:", err.message);
         reject(err);
       } else {
-        resolve(row); // Returns true if row exists, else false
+        resolve(row);
       }
     });
   });
@@ -93,26 +93,32 @@ const insertData = async (product, log) => {
       const date = new Date();
       db.run("BEGIN TRANSACTION;");
       if (log.type != "restock") {
-        let customerId;
-        let salesmenId;
+        let customerId = {};
+        let salesmenId = {};
         try {
           //does exist check
           customerId = await customerExists(log.personDetails.customerName);
+          if (customerId === undefined) customerId = {};
           salesmenId = await salesmenExists(log.personDetails.salesmenName);
         } catch (err) {
           console.log(err);
         }
 
-        // if (!salesmenId)
-        //   return reject({ success: false, message: "Salesmen doesn't exist with name: " + log.personDetails.salesmenName });
+        if (!salesmenId.salesmen_id)
+          return reject({ success: false, message: "Salesmen doesn't exist with name: " + log.personDetails.salesmenName });
 
-        if (!customerId) {
+        if (!customerId.customer_id) {
           //if doesnt exist create new id
-          customerId = v4();
+          customerId.customer_id = v4();
           const sql2 = "INSERT INTO customers (customer_id, name, phn_no, address) VALUES(?, ?, ?, ?)";
           db.run(
             sql2,
-            [customerId, log.personDetails.customerName, log.personDetails.customerPhnNo, log.personDetails.customerAddress],
+            [
+              customerId.customer_id,
+              log.personDetails.customerName,
+              log.personDetails.customerPhnNo,
+              log.personDetails.customerAddress,
+            ],
             function (err) {
               if (err) {
                 console.log(err);
@@ -124,13 +130,17 @@ const insertData = async (product, log) => {
         }
 
         const sql3 = `INSERT INTO transactions (transaction_id, transaction_type, customer_id, salesmen_id, discount, date_time) VALUES (?, ?, ?, ?, ?, ?)`;
-        db.run(sql3, [transactionId, log.type, customerId, salesmenId, log?.discount ?? 0, date.toLocaleString()], function (err) {
-          if (err) {
-            console.log(err);
-            db.run("ROLLBACK;");
-            return reject({ success: false, message: "Transaction not inserted: " + err.message });
+        db.run(
+          sql3,
+          [transactionId, log.type, customerId.customer_id, salesmenId.salesmen_id, log?.discount ?? 0, date.toLocaleString()],
+          function (err) {
+            if (err) {
+              console.log(err);
+              db.run("ROLLBACK;");
+              return reject({ success: false, message: "Transaction not inserted: " + err.message });
+            }
           }
-        });
+        );
       } else {
         const sql3 = `INSERT INTO transactions (transaction_id, transaction_type, date_time) VALUES (?, ?, ?)`;
         db.run(sql3, [transactionId, log.type, date.toLocaleString()], function (err) {
@@ -232,6 +242,23 @@ const fetchCustomerData = (value, limit = 8) => {
     });
   });
 };
+const fetchCustomerDataById = (id) => {
+  return new Promise((resolve, reject) => {
+    // Set encryption key for reading data
+    db.run("PRAGMA key = 'Ma@7974561017';");
+    createTable();
+
+    const query = `SELECT customer_id, name, phn_no, address FROM customers WHERE customer_id= ?`;
+
+    db.all(query, [id], (err, rows) => {
+      if (err) {
+        reject(err); // Reject promise if error occurs
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
 
 //for suggestions
 const fetchSalesmenData = (value, limit = 8) => {
@@ -253,6 +280,24 @@ const fetchSalesmenData = (value, limit = 8) => {
   });
 };
 
+const fetchSalesmenDataById = (id) => {
+  return new Promise((resolve, reject) => {
+    // Set encryption key for reading data
+    db.run("PRAGMA key = 'Ma@7974561017';");
+    createTable();
+
+    const query = `SELECT salesmen_id, name, phn_no, address FROM salesmen WHERE salesmen_id=?`;
+
+    db.all(query, [id], (err, rows) => {
+      if (err) {
+        reject(err); // Reject promise if error occurs
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
 const newSalesmen = (data) => {
   return new Promise(async (resolve, reject) => {
     // Set encryption key for reading data
@@ -262,14 +307,41 @@ const newSalesmen = (data) => {
     if (await salesmenExists(data.name)) {
       reject({ success: false, message: "Salesmen alerady exists! " });
     }
-    const query = `INSERT INTO salesmen (name, phn_no, address) VALUES (?, ?, ?);`;
-    db.run(query, [data.name, data.phnNo, data.address], (err, rows) => {
+    const query = `INSERT INTO salesmen (salesmen_id, name, phn_no, address) VALUES (?, ?, ?, ?);`;
+    const id = v4();
+    db.run(query, [id, data.name, data.phnNo, data.address], (err, rows) => {
       if (err) {
         reject({ success: false, message: "Salesmen not inserted: " + err.message }); // Reject promise if error occurs
       } else {
         resolve({ success: true, message: `Salesmen inserted successfully: : ${data.name}` });
       }
     });
+  });
+};
+
+const updateSale = (sale) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      db.run("PRAGMA key = 'Ma@7974561017';");
+      createTable();
+
+      const sql = `UPDATE sales_log SET items = ?, price = ? WHERE sale_id = ?;`;
+
+      const items = Number(sale.prevItems) - Number(sale.items);
+      const price = Number(sale.items) * Number(sale.priceOfOne);
+
+      db.run(sql, [items, price, sale.id], function (err) {
+        if (err) {
+          reject({ success: false, message: "Error updating sale: " + err.message });
+        } else if (this.changes === 0) {
+          reject({ success: false, message: "No sale updated" });
+        } else {
+          resolve({ success: false, message: "sale updated" });
+        }
+      });
+    } catch (error) {
+      reject({ success: false, message: "Unexpected error: " + error.message });
+    }
   });
 };
 
@@ -280,6 +352,10 @@ module.exports = {
   fetchAllLogs,
   fetchLogsByTransacton,
   fetchCustomerData,
+  fetchCustomerDataById,
   fetchSalesmenData,
+  fetchSalesmenDataById,
   newSalesmen,
+  salesmenExists,
+  updateSale,
 };

@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
 import Transaction from "../components/transaction";
+import Return from "../components/return";
 
 function Sales() {
   const [transactions, setTransactions] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [showReturn, setShowReturn] = useState(false);
+  const [currentTransaction, setCurrentTransaction] = useState();
+  const [key, setKey] = useState(0);
+
+  const forceRerender = () => {
+    console.log("force rerender");
+    setKey((prevKey) => prevKey + 1);
+  };
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -11,7 +20,7 @@ function Sales() {
       setTransactions(result);
     };
     fetchTransactions();
-  }, []);
+  }, [key]);
 
   // Filter transactions based on the selected filter
   const filteredTransactions = transactions.filter((transaction) => {
@@ -43,8 +52,15 @@ function Sales() {
       </div>
 
       {/* Render filtered transactions */}
+      {showReturn && <Return transaction={currentTransaction} setShowReturn={setShowReturn} forceRerender={forceRerender} />}
       {filteredTransactions.map((transaction, index) => (
-        <Transaction key={index} index={index} transaction={transaction} />
+        <Transaction
+          key={index}
+          index={index}
+          transaction={transaction}
+          setShowReturn={setShowReturn}
+          setCurrentTransaction={setCurrentTransaction}
+        />
       ))}
     </div>
   );

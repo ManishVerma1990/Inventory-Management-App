@@ -1,18 +1,17 @@
+import { FaXmark } from "react-icons/fa6";
+
 const ViewProduct = ({ product, setProduct }) => {
-  
   return (
     <div className="modal-overlay">
       <div className="preview-box" style={{ position: "relative" }}>
+        <span
+          onClick={() => setProduct({ show: false })}
+          style={{ position: "absolute", cursor: "pointer", color: "gray", right: "1rem", top: "0.15rem", fontSize: "2rem" }}
+        >
+          <FaXmark />
+        </span>
         <h5>Product Info </h5>
-        <button
-          type="button"
-          className="btn-close close-btn"
-          style={{ position: "absolute", top: "1.1rem", right: "1.1rem" }}
-          aria-label="Close"
-          onClick={() => {
-            setProduct({ show: false });
-          }}
-        ></button>
+
         <hr />
         <div className="container mt-2" style={{ textAlign: "start", fontSize: "1.2rem" }}>
           <div className="row mb-2">

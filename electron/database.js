@@ -19,7 +19,7 @@ function toLowerCaseObject(obj) {
 }
 
 // IPC Handler for "product"
-ipcMain.handle("product", async (event, action, data = {}, salsemenData = {}) => {
+ipcMain.handle("product", async (event, action, data = {}, salsemenData = {} /* for checking salesmenExists */) => {
   try {
     productsModel.createTable();
     let product = {};
@@ -80,6 +80,10 @@ ipcMain.handle("product", async (event, action, data = {}, salsemenData = {}) =>
 
       // used to update rows when product is sold
       case "put":
+        if (!(await transactionModel.salesmenExists(salsemenData))) {
+          return { success: false, message: "Salesmen doesn't exists! " };
+        }
+
         let failedProducts = [];
         let successCount = 0;
 
@@ -140,13 +144,16 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
         for (let i = 0; i < transactions.length; i++) {
           // if (transactions[i].transaction_type === "stocked") continue;
           const sales = await transactionModel.fetchLogsByTransacton(transactions[i].transaction_id);
+          const customer = await transactionModel.fetchCustomerDataById(transactions[i].customer_id);
+          const salesmen = await transactionModel.fetchSalesmenDataById(transactions[i].salesmen_id);
           let groupedSales = [];
           for (let j = 0; j < sales.length; j++) {
             const product = await productsModel.fetchData(sales[j].product_id);
             groupedSales.push({ ...sales[j], product: product });
           }
-          groupedTransactions.push({ ...transactions[i], sales: groupedSales });
+          groupedTransactions.push({ ...transactions[i], sales: groupedSales, customer: customer[0], salesmen: salesmen });
         }
+
         return groupedTransactions;
         // Group logs by transaction_id
         break;
@@ -161,6 +168,16 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
         break;
       case "getSalesmen":
         console.log("getsalesmen");
+        break;
+
+      case "updateSales":
+        for (let sale of data) {
+          try {
+            const res = await transactionModel.updateSale(sale);
+          } catch (err) {
+            console.error("Error updating sale:", err);
+          }
+        }
         break;
 
       //for autofill

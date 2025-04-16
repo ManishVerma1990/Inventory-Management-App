@@ -1,13 +1,28 @@
+
 const styles1 = { border: "1px solid green" };
 const styles2 = { border: "1px solid orange" };
 
-function Transaction({ index, transaction }) {
+function Transaction({ index, transaction, setShowReturn, setCurrentTransaction }) {
+  
+
+  let totalPrice = 0;
+  for (let i = 0; i < transaction.sales.length; i++) {
+    totalPrice += transaction.sales[i].price * transaction.sales[i].items;
+  }
   return (
     <>
       <div style={transaction.transaction_type === "restock" ? styles2 : styles1} className="card mb-3 p-2 shadow-sm">
         <div className="row">
           <div className="col">
-            <strong>Customer:</strong> {transaction.customer_name}
+            {transaction?.customer ? (
+              <>
+                <strong>Customer:</strong> {transaction.customer.name}
+              </>
+            ) : (
+              <>
+                <strong>Restock</strong>
+              </>
+            )}
           </div>
           <div className="col text-end">{transaction.date_time}</div>
         </div>
@@ -16,7 +31,7 @@ function Transaction({ index, transaction }) {
             <li key={index} className="list-group-item d-flex justify-content-between">
               <span>
                 {sale.product.name}({sale.product.product_quantity}
-                {sale.product.measuring_unit}) &nbsp;&nbsp;&nbsp; X{sale.quantity}
+                {sale.product.measuring_unit}) &nbsp;&nbsp;&nbsp; X{sale.items}
               </span>
               <span>₹{sale.price}</span>
             </li>
@@ -28,9 +43,18 @@ function Transaction({ index, transaction }) {
           </div>
           <div className="col text-end">
             <strong style={{ color: `${transaction.transaction_type === "restock" ? "darkred" : "green"}` }}>
-              {transaction.transaction_type === "restock" ? "-" : "+"} ₹{transaction.total_price - transaction.discount}
+              {transaction.transaction_type === "restock" ? "-" : "+"} ₹{totalPrice}
             </strong>
           </div>
+        </div>
+        <div
+          onClick={() => {
+            setShowReturn(true);
+            setCurrentTransaction(transaction);
+          }}
+          className="btn btn-outline-warning"
+        >
+          Return
         </div>
       </div>
     </>

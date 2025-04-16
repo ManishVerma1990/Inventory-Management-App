@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Suggestions from "./suggestions";
+import { FaXmark } from "react-icons/fa6";
 
 const Preview = ({ products, handleSubmit, setShowPreview }) => {
   const [personDetails, setPersonDetails] = useState({
@@ -71,7 +72,13 @@ const Preview = ({ products, handleSubmit, setShowPreview }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="preview-box">
+      <div className="preview-box" style={{ minWidth: "35rem", position: "relative" }}>
+        <span
+          onClick={() => setShowPreview(false)}
+          style={{ position: "absolute", cursor: "pointer", color: "gray", right: "1rem", top: "0.15rem", fontSize: "2rem" }}
+        >
+          <FaXmark />
+        </span>
         <h5>Preview</h5>
         <table className="table">
           <thead>
@@ -196,14 +203,6 @@ const Preview = ({ products, handleSubmit, setShowPreview }) => {
         </div>
 
         <div className="row justify-content-md-center">
-          <button
-            className="col m-2 col-4 btn btn-warning"
-            onClick={() => {
-              setShowPreview(false);
-            }}
-          >
-            Edit
-          </button>
           <button
             className="col m-2 col-4 btn btn-success"
             onClick={(e) => {

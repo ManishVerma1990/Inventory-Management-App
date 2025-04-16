@@ -17,6 +17,7 @@ a {
   margin: 0;
   --primary-color: #006241;
   --secondary-color: #efefef;
+  --tertiary-color: #00b4a1;
 }
 html,
 body {

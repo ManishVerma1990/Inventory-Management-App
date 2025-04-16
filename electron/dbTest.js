@@ -90,7 +90,7 @@ module.exports = () => {
       console.log(" Encryption key set.");
     });
     let limit = 100;
-    db.all("SELECT * FROM salesmen LIMIT ?", [limit], (err, rows) => {
+    db.all("SELECT * FROM customers LIMIT ?", [limit], (err, rows) => {
       if (err) throw err;
       console.log(rows);
     });

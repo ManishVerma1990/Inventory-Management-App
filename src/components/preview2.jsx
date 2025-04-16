@@ -1,3 +1,5 @@
+import { FaXmark } from "react-icons/fa6";
+
 function Preview2({ products, handleSubmit, setShowPreview }) {
   let total = 0;
   for (let i = 0; i < products.length; i++) {
@@ -5,7 +7,13 @@ function Preview2({ products, handleSubmit, setShowPreview }) {
   }
   return (
     <div className="modal-overlay">
-      <div className="preview-box">
+      <div className="preview-box" style={{ minWidth: "35rem", position: "relative" }}>
+        <span
+          onClick={() => setShowPreview(false)}
+          style={{ position: "absolute", cursor: "pointer", color: "gray", right: "1rem", top: "0.15rem", fontSize: "2rem" }}
+        >
+          <FaXmark />
+        </span>
         <h5>Preview</h5>
         <table className="table">
           <thead>
@@ -37,14 +45,6 @@ function Preview2({ products, handleSubmit, setShowPreview }) {
           </tbody>
         </table>
         <div className="row justify-content-md-center">
-          <button
-            className="col m-2 col-4 btn btn-warning"
-            onClick={() => {
-              setShowPreview(false);
-            }}
-          >
-            Edit
-          </button>
           <button
             className="col m-2 col-4 btn btn-success"
             onClick={(e) => {
