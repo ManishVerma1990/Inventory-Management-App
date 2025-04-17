@@ -1,13 +1,10 @@
-
 const styles1 = { border: "1px solid green" };
 const styles2 = { border: "1px solid orange" };
 
 function Transaction({ index, transaction, setShowReturn, setCurrentTransaction }) {
-  
-
   let totalPrice = 0;
   for (let i = 0; i < transaction.sales.length; i++) {
-    totalPrice += transaction.sales[i].price * transaction.sales[i].items;
+    totalPrice += transaction.sales[i].price;
   }
   return (
     <>

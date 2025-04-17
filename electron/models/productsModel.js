@@ -158,7 +158,7 @@ const fetchFilteredData = (value, limit = 8) => {
   });
 };
 
-const fetchAllData = (limit = -1) => {
+const fetchAllData = (limit) => {
   return new Promise((resolve, reject) => {
     // Set encryption key for reading data
     db.run("PRAGMA key = 'Ma@7974561017';");

@@ -46,7 +46,9 @@ function SearchBox() {
             }, 300)
           }
         />
-        <label htmlFor="search">Search here</label>
+        <label htmlFor="search" style={{ opacity: "0.8" }}>
+          Search here
+        </label>
         {showSuggestions ? <Suggestions values={values} callback={handleListClick} /> : ""}
       </div>
     </>

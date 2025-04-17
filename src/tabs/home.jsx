@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import SearchBox from "../components/searchBox";
 import { FaShoppingCart, FaPlus, FaSync } from "react-icons/fa";
 import Stats from "../components/stats";
+import SmInventory from "../components/smInventory";
+import SmSales from "../components/smSales";
 
 function Home() {
   // Send IPC request to main process
@@ -36,9 +38,33 @@ function Home() {
           </Link>
         </div>
       </div>
-      {/* <div className="row">
-        <Stats title={"Title"} req={"getProductsCount"}  />
-      </div> */}
+
+      <div className="row justify-content-around ">
+        <div className="col  d-flex justify-content-center">
+          <Stats title={"Total stock"} req={"getStocksCount"} />
+        </div>
+        <div className="col  d-flex justify-content-center">
+          <Stats title={"Sales today"} req={"getTodaySalesCount"} />
+        </div>
+        <div className="col  d-flex justify-content-center">
+          <Stats color={"green"} currency={true} title={"Today's revenue"} req={"getTodaysRevenue"} />
+        </div>
+        <div className="col  d-flex justify-content-center">
+          <Stats color={"orange"} title={"Low stock"} req={"getLowStockCount"} />
+        </div>
+      </div>
+
+      <div className="row mb-3">
+        <div className="col">
+          <SmInventory />
+        </div>
+      </div>
+
+      <div className="row mb-3">
+        <div className="col">
+          <SmSales />
+        </div>
+      </div>
     </div>
   );
 }

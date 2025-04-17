@@ -1,7 +1,11 @@
+import ReportForm from "../components/reportForm";
+
 function Reports() {
   return (
     <>
-      <h1>Reports</h1>
+      <div className="container">
+        <ReportForm />
+      </div>
     </>
   );
 }

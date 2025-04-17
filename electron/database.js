@@ -4,6 +4,9 @@ const sqlite3 = require("@journeyapps/sqlcipher").verbose();
 const dbTest = require("./dbTest");
 const productsModel = require("./models/productsModel");
 const transactionModel = require("./models/transactionModel");
+const queryModel = require("./models/queryModel");
+const { access } = require("fs");
+
 // const controller = require("./controller");
 // dbTest();
 
@@ -30,7 +33,7 @@ ipcMain.handle("product", async (event, action, data = {}, salsemenData = {} /* 
     switch (action) {
       //returns all rows, limit can also be given
       case "get":
-        return await productsModel.fetchAllData();
+        return await productsModel.fetchAllData(data);
 
       //filters rows on given input
       case "getSuggestions":
@@ -139,7 +142,7 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
     switch (action) {
       case "get":
         // returns transactions and sales associated with that, limit can be given
-        const transactions = await transactionModel.fetchAllTransactions();
+        const transactions = await transactionModel.fetchAllTransactions(data);
         const groupedTransactions = [];
         for (let i = 0; i < transactions.length; i++) {
           // if (transactions[i].transaction_type === "stocked") continue;
@@ -193,6 +196,29 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
     console.error("Error in 'logs' handler:", error);
     return { success: false, message: error.message };
   }
+});
+
+ipcMain.handle("fetch", async (event, action, params = {}) => {
+  try {
+    switch (action) {
+      case "getLowStockCount":
+        const result1 = (await queryModel.getLowStockCount())[0];
+        return result1.count;
+        break;
+      case "getStocksCount":
+        const result2 = (await queryModel.getStocksCount())[0];
+        return result2.count;
+        break;
+      case "getTodaySalesCount":
+        const result3 = (await queryModel.getTodaySalesCount())[0];
+        return result3.count;
+        break;
+      case "getTodaysRevenue":
+        const result4 = (await queryModel.getTodaysRevenue())[0];
+        return result4.count;
+        break;
+    }
+  } catch (error) {}
 });
 
 module.exports = { db };

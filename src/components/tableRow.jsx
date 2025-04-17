@@ -1,5 +1,4 @@
 function TableRow(props) {
-  console.log(props.product);
   return (
     <>
       <tr

@@ -16,7 +16,7 @@ function Sales() {
 
   useEffect(() => {
     const fetchTransactions = async () => {
-      const result = await window.api.logs("get");
+      const result = await window.api.logs("get", 10000000);
       setTransactions(result);
     };
     fetchTransactions();
