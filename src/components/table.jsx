@@ -19,7 +19,6 @@ function Table({ data }) {
               <TableRow key={index} id={index} product={product} serialNumber={index + 1} />
             ))}
           </tbody>
-          <tfoot className="mt-3">_</tfoot>
         </table>
       </div>
 

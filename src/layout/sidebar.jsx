@@ -16,12 +16,12 @@ function Sidebar() {
       <ul className="nav">
         {[
           { name: "Home", icon: <FaHome />, path: "/" },
-          { name: "Stocks", icon: <FaWarehouse />, path: "/stocks" },
-          { name: "Sales", icon: <FaChartLine />, path: "/sales" },
-          { name: "Reports", icon: <FaFileAlt />, path: "/reports" },
+          // { name: "Stocks", icon: <FaWarehouse />, path: "/stocks" },
+          // { name: "Sales", icon: <FaChartLine />, path: "/sales" },
           { name: "Sell Item", icon: <FaShoppingCart />, path: "/sellProduct" },
-          { name: "New Item", icon: <FaPlus />, path: "/newProduct" },
           { name: "Restock", icon: <FaSync />, path: "/reStock" },
+          { name: "New Item", icon: <FaPlus />, path: "/newProduct" },
+          { name: "Reports", icon: <FaFileAlt />, path: "/reports" },
           { name: "Salesmen", icon: <FaUser />, path: "/salesmen" },
         ].map((item) => (
           <NavLink

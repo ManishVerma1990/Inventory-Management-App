@@ -15,7 +15,7 @@ function TableRow(props) {
         <td>
           {props.product.product_quantity} {props.product.measuring_unit}{" "}
         </td>
-        <td>{props.product.selling_price}</td>
+        <td>&#8377;{props.product.selling_price}</td>
         <td>{props.product.stock_quantity}</td>
       </tr>
 

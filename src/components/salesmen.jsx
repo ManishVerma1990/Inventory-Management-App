@@ -1,13 +1,18 @@
 import { Link } from "react-router-dom";
 import SalesmenTable from "./salesmenTable";
+import NewSalesmen from "./newSalesmen";
 
 function Salesmen() {
   return (
     <>
-      <Link to="/salesmen/new" type="button" className="shadow btn btn-lg btn-primary m-3">
-        New Salesmen
-      </Link>
-      <SalesmenTable />
+      <div className="conatiner">
+        <div className="card shadow p-3">
+          <NewSalesmen />
+        </div>
+        <div className="card shadow p-3 mt-3">
+          <SalesmenTable />
+        </div>
+      </div>
     </>
   );
 }

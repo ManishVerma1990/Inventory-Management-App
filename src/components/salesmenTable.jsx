@@ -31,7 +31,6 @@ function SalesmenTable() {
             </tr>
           ))}
         </tbody>
-        <tfoot className="mt-3">_</tfoot>
       </table>
     </>
   );

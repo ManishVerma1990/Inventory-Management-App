@@ -154,149 +154,151 @@ function ReStockForm() {
   };
 
   return (
-    <div className="container px-5 pt-3">
-      {showAlert ? <Alert alert={alert} showAlert={showAlert} /> : ""}
-      {showPreview ? <Preview2 products={products} handleSubmit={handleSubmit} setShowPreview={setShowPreview} /> : ""}
-      <form className={`needs-validation ${showPreview ? "blur-background" : ""}`} noValidate>
-        {products.map((product, index) => (
-          <div key={index}>
-            <div className="row mb-3">
-              <div className="col">
-                <div className="form-floating">
-                  <input
-                    onChange={(e) => handleChange(index, e)}
-                    value={product.name}
-                    type="text"
-                    className={`form-control ${errors[`name-${index}`] ? "is-invalid" : product.name ? "is-valid" : ""}`}
-                    id={`name-${index}`}
-                    placeholder="Product Name"
-                    name="name"
-                    onBlur={() =>
-                      setTimeout(() => {
-                        setProducts((prevProducts) =>
-                          prevProducts.map((product, i) => (i === index ? { ...product, showSuggestions: false } : product))
-                        );
-                      }, 300)
-                    }
-                    required
-                  />
-                  <label htmlFor={`name-${index}`}>Name</label>
-                  {product.showSuggestions && <Suggestions values={values} callback={(value) => handleListClick(index, value)} />}
-                  {errors[`name-${index}`] && <div className="invalid-feedback">{errors[`name-${index}`]}</div>}
-                </div>
-              </div>
-              <div className="col">
-                <div className="row g-0">
-                  <div className="col">
-                    <div className="form-floating">
-                      <input
-                        onChange={(e) => handleChange(index, e)}
-                        value={product.quantity}
-                        type="number"
-                        className={`form-control ${errors[`quantity-${index}`] ? "is-invalid" : product.quantity ? "is-valid" : ""}`}
-                        id={`quantity-${index}`}
-                        placeholder="Quantity"
-                        name="quantity"
-                        disabled
-                        readOnly
-                      />
-                      <label htmlFor={`quantity-${index}`}>Quantity</label>
-                      {errors[`quantity-${index}`] && <div className="invalid-feedback">{errors[`quantity-${index}`]}</div>}
-                    </div>
-                  </div>
-                  <div className="col">
-                    <select
-                      onChange={(e) => handleChange(index, e)}
-                      value={product.measuringUnit}
-                      style={{ height: "3.6rem" }}
-                      className={`form-select ${
-                        errors[`measuringUnit-${index}`] ? "is-invalid" : product.measuringUnit ? "is-valid" : ""
-                      }`}
-                      name="measuringUnit"
-                      disabled
-                      readOnly
-                    >
-                      <option defaultValue={"measuringUnit"}>Unit</option>
-                      <option value="kg">kg</option>
-                      <option value="g">g</option>
-                      <option value="l">l</option>
-                      <option value="ml">ml</option>
-                      <option value="pcs">pcs</option>
-                    </select>
-                    {errors[`measuringUnit-${index}`] && <div className="invalid-feedback">{errors[`measuringUnit-${index}`]}</div>}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row mb-3">
-              <div className="col">
-                <div className="form-floating">
-                  <input
-                    onChange={(e) => handleChange(index, e)}
-                    value={product.items}
-                    type="number"
-                    min={"0"}
-                    className={`form-control ${errors[`items-${index}`] ? "is-invalid" : product.items ? "is-valid" : ""}`}
-                    id={`items-${index}`}
-                    placeholder="No of Items"
-                    name="items"
-                    required
-                  />
-                  <label htmlFor={`items-${index}`}>Items</label>
-                  {errors[`items-${index}`] && <div className="invalid-feedback">{errors[`items-${index}`]}</div>}
-                </div>
-              </div>
-              <div className="col">
-                <div className="input-group">
-                  <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
-                    &nbsp; &#x20B9; &nbsp;{" "}
-                  </span>
+    <div className="container pt-3">
+      <div className="card shadow p-3">
+        {showAlert ? <Alert alert={alert} showAlert={showAlert} /> : ""}
+        {showPreview ? <Preview2 products={products} handleSubmit={handleSubmit} setShowPreview={setShowPreview} /> : ""}
+        <form className={`needs-validation ${showPreview ? "blur-background" : ""}`} noValidate>
+          {products.map((product, index) => (
+            <div key={index}>
+              <div className="row mb-3">
+                <div className="col">
                   <div className="form-floating">
                     <input
                       onChange={(e) => handleChange(index, e)}
-                      value={product.sellingPrice}
-                      type="number"
-                      className={`form-control ${errors[`price-${index}`] ? "is-invalid" : product.price ? "is-valid" : ""}`}
-                      id={`price-${index}`}
-                      placeholder="Price"
-                      name="price"
+                      value={product.name}
+                      type="text"
+                      className={`form-control ${errors[`name-${index}`] ? "is-invalid" : product.name ? "is-valid" : ""}`}
+                      id={`name-${index}`}
+                      placeholder="Product Name"
+                      name="name"
+                      onBlur={() =>
+                        setTimeout(() => {
+                          setProducts((prevProducts) =>
+                            prevProducts.map((product, i) => (i === index ? { ...product, showSuggestions: false } : product))
+                          );
+                        }, 300)
+                      }
                       required
-                      disabled
-                      readOnly
                     />
-                    <label htmlFor={`price-${index}`}>Price</label>
-                    {errors[`price-${index}`] && <div className="invalid-feedback">{errors[`price-${index}`]}</div>}
+                    <label htmlFor={`name-${index}`}>Name</label>
+                    {product.showSuggestions && <Suggestions values={values} callback={(value) => handleListClick(index, value)} />}
+                    {errors[`name-${index}`] && <div className="invalid-feedback">{errors[`name-${index}`]}</div>}
+                  </div>
+                </div>
+                <div className="col">
+                  <div className="row g-0">
+                    <div className="col">
+                      <div className="form-floating">
+                        <input
+                          onChange={(e) => handleChange(index, e)}
+                          value={product.quantity}
+                          type="number"
+                          className={`form-control ${errors[`quantity-${index}`] ? "is-invalid" : product.quantity ? "is-valid" : ""}`}
+                          id={`quantity-${index}`}
+                          placeholder="Quantity"
+                          name="quantity"
+                          disabled
+                          readOnly
+                        />
+                        <label htmlFor={`quantity-${index}`}>Quantity</label>
+                        {errors[`quantity-${index}`] && <div className="invalid-feedback">{errors[`quantity-${index}`]}</div>}
+                      </div>
+                    </div>
+                    <div className="col">
+                      <select
+                        onChange={(e) => handleChange(index, e)}
+                        value={product.measuringUnit}
+                        style={{ height: "3.6rem" }}
+                        className={`form-select ${
+                          errors[`measuringUnit-${index}`] ? "is-invalid" : product.measuringUnit ? "is-valid" : ""
+                        }`}
+                        name="measuringUnit"
+                        disabled
+                        readOnly
+                      >
+                        <option defaultValue={"measuringUnit"}>Unit</option>
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                        <option value="l">l</option>
+                        <option value="ml">ml</option>
+                        <option value="pcs">pcs</option>
+                      </select>
+                      {errors[`measuringUnit-${index}`] && <div className="invalid-feedback">{errors[`measuringUnit-${index}`]}</div>}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            {
-              /*product.showStock*/ true && (
-                <div className="mb-3 row">
-                  <label htmlFor="stock" className="col-sm-3 col-form-label">
-                    Items in stock:
-                  </label>
-                  <div className="col-sm-7">
-                    <input type="text" readOnly className="form-control-plaintext" id="stock" value={product?.stock_quantity} />
+              <div className="row mb-3">
+                <div className="col">
+                  <div className="form-floating">
+                    <input
+                      onChange={(e) => handleChange(index, e)}
+                      value={product.items}
+                      type="number"
+                      min={"0"}
+                      className={`form-control ${errors[`items-${index}`] ? "is-invalid" : product.items ? "is-valid" : ""}`}
+                      id={`items-${index}`}
+                      placeholder="No of Items"
+                      name="items"
+                      required
+                    />
+                    <label htmlFor={`items-${index}`}>Items</label>
+                    {errors[`items-${index}`] && <div className="invalid-feedback">{errors[`items-${index}`]}</div>}
                   </div>
                 </div>
-              )
-            }
-            {products.length > 1 && <hr />}
-          </div>
-        ))}
-      </form>
-      <div className="mt-3">
-        <button type="button" className="btn btn-primary" onClick={addProductField}>
-          Add More
-        </button>
-        <button
-          type="button"
-          className={`btn btn-outline-primary mx-2 ${products[0].quantity === "" ? "disabled" : ""}`}
-          onClick={() => setShowPreview(true)}
-        >
-          Re-stock
-        </button>
+                <div className="col">
+                  <div className="input-group">
+                    <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
+                      &nbsp; &#x20B9; &nbsp;{" "}
+                    </span>
+                    <div className="form-floating">
+                      <input
+                        onChange={(e) => handleChange(index, e)}
+                        value={product.sellingPrice}
+                        type="number"
+                        className={`form-control ${errors[`price-${index}`] ? "is-invalid" : product.price ? "is-valid" : ""}`}
+                        id={`price-${index}`}
+                        placeholder="Price"
+                        name="price"
+                        required
+                        disabled
+                        readOnly
+                      />
+                      <label htmlFor={`price-${index}`}>Price</label>
+                      {errors[`price-${index}`] && <div className="invalid-feedback">{errors[`price-${index}`]}</div>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {
+                /*product.showStock*/ true && (
+                  <div className="mb-3 row">
+                    <label htmlFor="stock" className="col-sm-3 col-form-label">
+                      Items in stock:
+                    </label>
+                    <div className="col-sm-7">
+                      <input type="text" readOnly className="form-control-plaintext" id="stock" value={product?.stock_quantity} />
+                    </div>
+                  </div>
+                )
+              }
+              {products.length > 1 && <hr />}
+            </div>
+          ))}
+        </form>
+        <div>
+          <button type="button" className="btn btn-primary" onClick={addProductField}>
+            Add More
+          </button>
+          <button
+            type="button"
+            className={`btn btn-outline-primary mx-2 ${products[0].quantity === "" ? "disabled" : ""}`}
+            onClick={() => setShowPreview(true)}
+          >
+            Re-stock
+          </button>
+        </div>
       </div>
     </div>
   );

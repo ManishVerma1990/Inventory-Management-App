@@ -88,201 +88,203 @@ function NewProductForm() {
   };
 
   return (
-    <div className="contianer px-5 pt-3">
-      {showAlert ? <Alert alert={alert} showAlert={showAlert} /> : ""}
-      <form className="needs-validation " noValidate>
-        <div className="row mb-3">
-          <div className="col ">
-            <div className="form-floating" style={{ position: "relative" }}>
-              <input
-                onChange={(e) => handleChange(e, values)}
-                value={formData.name}
-                type="text"
-                className={`form-control ${errors.name ? "is-invalid" : formData.name ? "is-valid" : ""}`}
-                id="name"
-                placeholder="product name"
-                name="name"
-                onBlur={() =>
-                  setTimeout(() => {
-                    setShowSuggestions(false);
-                  }, 300)
-                }
-              />
-              <label htmlFor="name">Name</label>
-              {showSuggestions ? <Suggestions values={values} callback={handleListClick} /> : ""}
-              {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+    <div className="container pt-3">
+      <div className="card shadow p-3 ">
+        {showAlert ? <Alert alert={alert} showAlert={showAlert} /> : ""}
+        <form className="needs-validation " noValidate>
+          <div className="row mb-3">
+            <div className="col ">
+              <div className="form-floating" style={{ position: "relative" }}>
+                <input
+                  onChange={(e) => handleChange(e, values)}
+                  value={formData.name}
+                  type="text"
+                  className={`form-control ${errors.name ? "is-invalid" : formData.name ? "is-valid" : ""}`}
+                  id="name"
+                  placeholder="product name"
+                  name="name"
+                  onBlur={() =>
+                    setTimeout(() => {
+                      setShowSuggestions(false);
+                    }, 300)
+                  }
+                />
+                <label htmlFor="name">Name</label>
+                {showSuggestions ? <Suggestions values={values} callback={handleListClick} /> : ""}
+                {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+              </div>
             </div>
-          </div>
-          <div className="col">
-            <div className="row g-0">
-              <div className="col">
-                <div className="form-floating">
-                  <input
+            <div className="col">
+              <div className="row g-0">
+                <div className="col">
+                  <div className="form-floating">
+                    <input
+                      onChange={handleChange}
+                      value={formData.quantity}
+                      type="number"
+                      className={`form-control ${errors.quantity ? "is-invalid" : formData.quantity ? "is-valid" : ""}`}
+                      id="quantity"
+                      placeholder="quantity of 1 item"
+                      name="quantity"
+                    />
+                    <label htmlFor="quantity">quantity</label>
+                    {errors.quantity && <div className="invalid-feedback">{errors.quantity}</div>}
+                  </div>
+                </div>
+                <div className="col">
+                  <select
                     onChange={handleChange}
-                    value={formData.quantity}
-                    type="number"
-                    className={`form-control ${errors.quantity ? "is-invalid" : formData.quantity ? "is-valid" : ""}`}
-                    id="quantity"
-                    placeholder="quantity of 1 item"
-                    name="quantity"
-                  />
-                  <label htmlFor="quantity">quantity</label>
-                  {errors.quantity && <div className="invalid-feedback">{errors.quantity}</div>}
+                    value={formData.measuringUnit}
+                    style={{ height: "3.6rem" }}
+                    className={`form-select form-select ${
+                      errors.measuringUnit ? "is-invalid" : formData.measuringUnit ? "is-valid" : ""
+                    }`}
+                    aria-label="Default select example"
+                    name="measuringUnit"
+                  >
+                    <option defaultValue={"measuringUnit"}>unit</option>
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="l">l</option>
+                    <option value="ml">ml</option>
+                    <option value="cs">pcs</option>
+                  </select>
+                  {errors.measuringUnit && <div className="invalid-feedback">{errors.unit}</div>}
                 </div>
               </div>
-              <div className="col">
-                <select
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col">
+              <div className="form-floating">
+                <textarea
                   onChange={handleChange}
-                  value={formData.measuringUnit}
-                  style={{ height: "3.6rem" }}
-                  className={`form-select form-select ${
-                    errors.measuringUnit ? "is-invalid" : formData.measuringUnit ? "is-valid" : ""
-                  }`}
-                  aria-label="Default select example"
-                  name="measuringUnit"
-                >
-                  <option defaultValue={"measuringUnit"}>unit</option>
-                  <option value="kg">kg</option>
-                  <option value="g">g</option>
-                  <option value="l">l</option>
-                  <option value="ml">ml</option>
-                  <option value="cs">pcs</option>
-                </select>
-                {errors.measuringUnit && <div className="invalid-feedback">{errors.unit}</div>}
+                  value={formData.description}
+                  className="form-control"
+                  placeholder="description"
+                  id="description"
+                  name="description"
+                ></textarea>
+                <label htmlFor="description">Description</label>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="row mb-3">
-          <div className="col">
-            <div className="form-floating">
-              <textarea
-                onChange={handleChange}
-                value={formData.description}
-                className="form-control"
-                placeholder="description"
-                id="description"
-                name="description"
-              ></textarea>
-              <label htmlFor="description">Description</label>
-            </div>
-          </div>
-          <div className="col">
-            <div className="form-floating">
-              <input
-                onChange={handleChange}
-                value={formData.category}
-                type="text"
-                className="form-control"
-                id="category"
-                placeholder="category"
-                name="category"
-              />
-              <label htmlFor="category">category</label>
-            </div>
-          </div>
-        </div>
-        <div className="row mb-3">
-          <div className="col">
-            <div className="form-floating">
-              <input
-                onChange={handleChange}
-                value={formData.items}
-                type="number"
-                className={`form-control ${errors.items ? "is-invalid" : formData.items ? "is-valid" : ""}`}
-                id="items"
-                placeholder="items to be added"
-                name="items"
-              />
-              <label htmlFor="items">items</label>
-              {errors.items && <div className="invalid-feedback">{errors.items}</div>}
-            </div>
-          </div>
-          <div className="col">
-            <div className="input-group">
-              <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
-                &nbsp; &#x20B9; &nbsp;{" "}
-              </span>
+            <div className="col">
               <div className="form-floating">
                 <input
                   onChange={handleChange}
-                  value={formData.commission}
-                  type="number"
-                  className={`form-control ${errors.commission ? "is-invalid" : formData.commission ? "is-valid" : ""}`}
-                  id="commisson"
-                  placeholder="commission to be added"
-                  name="commission"
+                  value={formData.category}
+                  type="text"
+                  className="form-control"
+                  id="category"
+                  placeholder="category"
+                  name="category"
                 />
-                <label htmlFor="commission">Commission</label>
-                {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
+                <label htmlFor="category">category</label>
               </div>
             </div>
           </div>
-        </div>
-        <div className="row mb-3">
-          <div className="col">
-            <div className="input-group">
-              <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
-                &nbsp; &#x20B9; &nbsp;{" "}
-              </span>
-              <div className="form-floating ">
+          <div className="row mb-3">
+            <div className="col">
+              <div className="form-floating">
                 <input
                   onChange={handleChange}
-                  value={formData.costPrice}
+                  value={formData.items}
                   type="number"
-                  className={`form-control ${errors.costPrice ? "is-invalid" : formData.costPrice ? "is-valid" : ""}`}
-                  id="costPrice"
-                  placeholder="costPrice"
-                  name="costPrice"
+                  className={`form-control ${errors.items ? "is-invalid" : formData.items ? "is-valid" : ""}`}
+                  id="items"
+                  placeholder="items to be added"
+                  name="items"
                 />
-                <label htmlFor="costPrice">cost price</label>
-                {errors.costPrice && <div className="invalid-feedback">{errors.costPrice}</div>}
+                <label htmlFor="items">items</label>
+                {errors.items && <div className="invalid-feedback">{errors.items}</div>}
+              </div>
+            </div>
+            <div className="col">
+              <div className="input-group">
+                <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
+                  &nbsp; &#x20B9; &nbsp;{" "}
+                </span>
+                <div className="form-floating">
+                  <input
+                    onChange={handleChange}
+                    value={formData.commission}
+                    type="number"
+                    className={`form-control ${errors.commission ? "is-invalid" : formData.commission ? "is-valid" : ""}`}
+                    id="commisson"
+                    placeholder="commission to be added"
+                    name="commission"
+                  />
+                  <label htmlFor="commission">Commission</label>
+                  {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
+                </div>
               </div>
             </div>
           </div>
-          <div className="col">
-            <div className="input-group">
-              <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
-                &nbsp; &#x20B9; &nbsp;{" "}
-              </span>
-              <div className="form-floating ">
+          <div className="row mb-3">
+            <div className="col">
+              <div className="input-group">
+                <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
+                  &nbsp; &#x20B9; &nbsp;{" "}
+                </span>
+                <div className="form-floating ">
+                  <input
+                    onChange={handleChange}
+                    value={formData.costPrice}
+                    type="number"
+                    className={`form-control ${errors.costPrice ? "is-invalid" : formData.costPrice ? "is-valid" : ""}`}
+                    id="costPrice"
+                    placeholder="costPrice"
+                    name="costPrice"
+                  />
+                  <label htmlFor="costPrice">cost price</label>
+                  {errors.costPrice && <div className="invalid-feedback">{errors.costPrice}</div>}
+                </div>
+              </div>
+            </div>
+            <div className="col">
+              <div className="input-group">
+                <span className="input-group-text" style={{ maxHeight: "3.6rem" }}>
+                  &nbsp; &#x20B9; &nbsp;{" "}
+                </span>
+                <div className="form-floating ">
+                  <input
+                    onChange={handleChange}
+                    value={formData.sellingPrice}
+                    type="number"
+                    className={`form-control ${errors.sellingPrice ? "is-invalid" : formData.sellingPrice ? "is-valid" : ""}`}
+                    id="sellingPrice"
+                    placeholder="sellingPrice"
+                    name="sellingPrice"
+                  />
+                  <label htmlFor="sellingPrice">selling price</label>
+                  {errors.sellingPrice && <div className="invalid-feedback">{errors.sellingPrice}</div>}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-6">
+              <div className="form-floating">
                 <input
                   onChange={handleChange}
-                  value={formData.sellingPrice}
+                  value={formData.minStock}
                   type="number"
-                  className={`form-control ${errors.sellingPrice ? "is-invalid" : formData.sellingPrice ? "is-valid" : ""}`}
-                  id="sellingPrice"
-                  placeholder="sellingPrice"
-                  name="sellingPrice"
+                  className={`form-control ${errors.minStock ? "is-invalid" : formData.minStock ? "is-valid" : ""}`}
+                  id="minStock"
+                  placeholder="minStock to be added"
+                  name="minStock"
                 />
-                <label htmlFor="sellingPrice">selling price</label>
-                {errors.sellingPrice && <div className="invalid-feedback">{errors.sellingPrice}</div>}
+                <label htmlFor="minStock">minStock</label>
+                {errors.minStock && <div className="invalid-feedback">{errors.minStock}</div>}
               </div>
             </div>
           </div>
+        </form>
+        <div>
+          <button onClick={handleSubmit} className="btn btn-primary ">
+            Add stock
+          </button>
         </div>
-        <div className="row mb-3">
-          <div className="col-6">
-            <div className="form-floating">
-              <input
-                onChange={handleChange}
-                value={formData.minStock}
-                type="number"
-                className={`form-control ${errors.minStock ? "is-invalid" : formData.minStock ? "is-valid" : ""}`}
-                id="minStock"
-                placeholder="minStock to be added"
-                name="minStock"
-              />
-              <label htmlFor="minStock">minStock</label>
-              {errors.minStock && <div className="invalid-feedback">{errors.minStock}</div>}
-            </div>
-          </div>
-        </div>
-      </form>
-      <div className="mt-3">
-        <button onClick={handleSubmit} className="btn btn-primary ">
-          Add stock
-        </button>
       </div>
     </div>
   );

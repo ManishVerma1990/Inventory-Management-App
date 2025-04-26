@@ -21,7 +21,6 @@ function Body() {
         <Route path="/sales" element={<Sales />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/salesmen" element={<Salesmen />} />
-        <Route path="/salesmen/new" element={<NewSalesmen />} />
       </Routes>
     </main>
   );

@@ -62,12 +62,14 @@ function NewSalesmen() {
               onChange={handleChange}
               value={name}
               type="text"
-              className={`form-control ${errors.name ? "is-invalid" : name ? "is-valid" : ""}`}
+              className={`form-control  ${errors.name ? "is-invalid" : name ? "is-valid" : ""}`}
               id="name"
               placeholder="product name"
               name="name"
             />
-            <label htmlFor="name">Name</label>
+            <label className="mx-2" htmlFor="name">
+              Name
+            </label>
             {errors.name && <div className="invalid-feedback">{errors.name}</div>}
           </div>
         </div>
@@ -82,7 +84,9 @@ function NewSalesmen() {
               placeholder="product name"
               name="phnNo"
             />
-            <label htmlFor="phnNo">Phone number</label>
+            <label className="mx-2" htmlFor="phnNo">
+              Phone number
+            </label>
             {errors.phnNo && <div className="invalid-feedback">{errors.phnNo}</div>}
           </div>
         </div>
@@ -97,7 +101,9 @@ function NewSalesmen() {
               placeholder="product name"
               name="address"
             />
-            <label htmlFor="address">Address</label>
+            <label className="mx-2" htmlFor="address">
+              Address
+            </label>
             {errors.address && <div className="invalid-feedback">{errors.address}</div>}
           </div>
         </div>
