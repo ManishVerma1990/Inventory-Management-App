@@ -1,13 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .draggable {
+        position: fixed; /* ensures it's always on top */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 40px;
+        z-index: 9999;
+        background-color: transparent;
+        -webkit-app-region: drag; /* enables dragging in Electron */
+        pointer-events: auto;
+      }
+    </style>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/warehouse-svgrepo-com.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Inventory Management App</title>
   </head>
   <body>
+    <div class="draggable"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

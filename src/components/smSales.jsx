@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 function SmSales() {
   const [transactions, setTransactions] = useState([]);
@@ -14,7 +15,6 @@ function SmSales() {
   let totalPrices = [];
   for (let j = 0; j < transactions.length; j++) {
     const sales = transactions[j].sales;
-    console.log(sales);
     let totalPrice = 0;
     for (let i = 0; i < sales.length; i++) {
       totalPrice += sales[i].price;
@@ -23,11 +23,17 @@ function SmSales() {
   }
   return (
     <>
-      <div className="card shadow text-start p-3">
-        <h5 className="card-title ">Sales</h5>
+      <div className="card shadow text-start px-3">
+        <div style={{ cursor: "pointer" }}>
+          <NavLink to={"/sales"} style={{ all: "unset" }}>
+            <h5 className="card-title d-flex pt-2 pb-2" style={{ marginBottom: "0" }}>
+              Sales <span className="ms-auto more-btn">more {">"}</span>
+            </h5>
+          </NavLink>
+        </div>
         <div className="row">
           {transactions.map((transaction, index) => (
-            <div key={index} className="col-lg-4 col-sm-6 mb-3 d-flex">
+            <div key={index} className="col-lg-4 col-sm-6 mb-4 d-flex">
               <div className="card p-2 text-start w-100 h-100">
                 <h5 className="card-title">{transaction?.customer?.name ? transaction.customer.name : "Restock"}</h5>
                 <span className="card-subtitle mb-2 text-body-secondary">{transaction.date_time}</span>

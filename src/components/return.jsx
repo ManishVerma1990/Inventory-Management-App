@@ -10,11 +10,12 @@ function Return({ transaction, setShowReturn, forceRerender }) {
     for (let input of inputs) {
       for (let sale of transaction.sales) {
         if (input.id === sale.sale_id && input.items > sale.items) {
-          console.log(input.id);
+          console.log(input.id === sale.sale_id && input.items > sale.items);
           return;
         }
       }
     }
+    console.log(setShowReturn);
     await window.api.logs("updateSales", inputs);
     setShowReturn(false);
     forceRerender();
@@ -26,7 +27,18 @@ function Return({ transaction, setShowReturn, forceRerender }) {
   }
   return (
     <div className="modal-overlay">
-      <div className="preview-box" style={{ minWidth: "35rem", position: "relative" }}>
+      <div
+        className="preview-box "
+        style={{
+          width: "90%",
+          maxWidth: "700px",
+          maxHeight: "90vh",
+          padding: "1rem",
+          backgroundColor: "white",
+          borderRadius: "8px",
+          position: "relative",
+        }}
+      >
         <span
           onClick={() => setShowReturn(false)}
           style={{ position: "absolute", cursor: "pointer", color: "gray", right: "1rem", top: "0.15rem", fontSize: "2rem" }}
@@ -35,7 +47,7 @@ function Return({ transaction, setShowReturn, forceRerender }) {
         </span>
         <h5>Return</h5>
 
-        <div className="px-3">
+        <div className="px-3  overflow-x-auto">
           <div className="row ">
             <div className="col text-start">
               <strong>Customer:</strong> {transaction.customer.name}
@@ -51,34 +63,45 @@ function Return({ transaction, setShowReturn, forceRerender }) {
             <div className="col-3">Return</div>
           </div>
 
-          <ul className="list-group list-group-flush">
-            {transaction.sales.map((sale, index) => (
-              <div key={index}>
-                <div className="row text-start " style={{ alignItems: "center" }}>
-                  <div className="col-4">
-                    {sale.product.name}({sale.product.product_quantity}
-                    {sale.product.measuring_unit})
+          <div
+            style={{
+              maxHeight: "250px", // Adjust as needed
+              overflowY: "auto",
+              margin: "0 0.5rem",
+              overflowX: "hidden",
+              paddingRight: "0.4rem",
+              height: "auto",
+            }}
+          >
+            <ul className="list-group list-group-flush">
+              {transaction.sales.map((sale, index) => (
+                <div key={index}>
+                  <div className="row text-start " style={{ alignItems: "center" }}>
+                    <div className="col-4">
+                      {sale.product.name}({sale.product.product_quantity}
+                      {sale.product.measuring_unit})
+                    </div>
+                    <div className="col-2">X{sale.items}</div>
+                    <div className="col-3">₹{sale.price}</div>
+                    <div className="col-3">
+                      <input
+                        onChange={(e) => {
+                          const newInputs = [...inputs];
+                          newInputs[index].items = e.target.value;
+                          setInputs(newInputs);
+                        }}
+                        value={inputs[index].items}
+                        type="number"
+                        className="form-control"
+                        name={`returnItem${index}`}
+                      />
+                    </div>
                   </div>
-                  <div className="col-2">X{sale.items}</div>
-                  <div className="col-3">₹{sale.price}</div>
-                  <div className="col-3">
-                    <input
-                      onChange={(e) => {
-                        const newInputs = [...inputs];
-                        newInputs[index].items = e.target.value;
-                        setInputs(newInputs);
-                      }}
-                      value={inputs[index].items}
-                      type="number"
-                      className="form-control"
-                      name={`returnItem${index}`}
-                    />
-                  </div>
+                  <hr />
                 </div>
-                <hr />
-              </div>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          </div>
 
           <div className="row">
             <div className="col">

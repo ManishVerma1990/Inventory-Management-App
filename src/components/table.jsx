@@ -12,7 +12,6 @@ function Table({ data }) {
               <th scope="col">Quantity</th>
               <th scope="col">Price</th>
               <th scope="col">InStock</th>
-              <th scope="col">GST (%)</th>
             </tr>
           </thead>
           <tbody>

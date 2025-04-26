@@ -16,7 +16,7 @@ function Clock() {
     }, 1000);
   }, 1);
   return (
-    <div className="clock">
+    <div className="clock" style={{ marginRight: "9rem" }}>
       <span className="fullDate">
         <span id="date"></span>-<span id="month"></span>-<span id="year"></span>{" "}
       </span>

@@ -19,10 +19,13 @@ function createWindow() {
     minWidth: 800,
     height: 600,
     minHeight: 600,
+    titleBarStyle: "hidden",
+    // expose window controlls in Windows/Linux
+    ...(process.platform !== "darwin" ? { titleBarOverlay: true } : {}),
     titleBarOverlay: {
-      color: "#000",
-      symbolColor: "#fff",
-      height: 30,
+      color: "#efefef",
+      symbolColor: "#000",
+      height: 40,
     },
     icon: getIcon(),
     webPreferences: {

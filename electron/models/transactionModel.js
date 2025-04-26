@@ -16,7 +16,7 @@ const createTable = () => {
     customer_id TEXT ,
     salesmen_id TEXT ,
     discount REAL DEFAULT 0,
-    date_time TEXT DEFAULT CURRENT_TIMESTAMP,
+    date_time TEXT ,
     FOREIGN KEY (salesmen_id) REFERENCES salesmen(salesmen_id) ON DELETE CASCADE,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );`
@@ -29,7 +29,7 @@ const createTable = () => {
     items INTEGER NOT NULL,
     price INTEGER NOT NULL,
     FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );`
   );
   db.run(
@@ -280,6 +280,25 @@ const fetchSalesmenData = (value, limit = 8) => {
   });
 };
 
+const fetchAllSalesmen = (limit = -1) => {
+  return new Promise((resolve, reject) => {
+    // Set encryption key for reading data
+    db.run("PRAGMA key = 'Ma@7974561017';");
+    createTable();
+
+    const safeLimit = Number.isInteger(limit) ? limit : 8;
+    const query = `SELECT salesmen_id, name, phn_no, address FROM salesmen LIMIT ?`;
+
+    db.all(query, [safeLimit], (err, rows) => {
+      if (err) {
+        reject(err); // Reject promise if error occurs
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
 const fetchSalesmenDataById = (id) => {
   return new Promise((resolve, reject) => {
     // Set encryption key for reading data
@@ -328,7 +347,7 @@ const updateSale = (sale) => {
       const sql = `UPDATE sales_log SET items = ?, price = ? WHERE sale_id = ?;`;
 
       const items = Number(sale.prevItems) - Number(sale.items);
-      const price = Number(sale.items) * Number(sale.priceOfOne);
+      const price = Number(items) * Number(sale.priceOfOne);
 
       db.run(sql, [items, price, sale.id], function (err) {
         if (err) {
@@ -354,6 +373,7 @@ module.exports = {
   fetchCustomerData,
   fetchCustomerDataById,
   fetchSalesmenData,
+  fetchAllSalesmen,
   fetchSalesmenDataById,
   newSalesmen,
   salesmenExists,

@@ -32,7 +32,7 @@ function SearchBox() {
   return (
     <>
       {product.show ? <ViewProduct product={product} setProduct={setProduct} /> : ""}
-      <div className={`form-floating ${product.show ? "blur-background" : ""}`}>
+      <div className={`shadow form-floating ${product.show ? "blur-background" : ""}`}>
         <input
           id="search"
           type="text"

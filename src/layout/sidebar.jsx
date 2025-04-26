@@ -6,7 +6,7 @@ function Sidebar() {
   const location = useLocation(); // Get the current URL path
 
   return (
-    <div className="sidebar shadow">
+    <div className="sidebar " style={{ marginTop: "0" }}>
       <div className="logo">
         <FaTractor />
       </div>

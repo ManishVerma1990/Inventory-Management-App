@@ -36,7 +36,10 @@ function Header() {
 
   return (
     <div className="header ">
-      <span className="tabname">{tabName(location.pathname)}</span>
+      <span className="tabname">
+        {"> "}
+        {tabName(location.pathname)}
+      </span>
       <Clock />
     </div>
   );

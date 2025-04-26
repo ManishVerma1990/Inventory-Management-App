@@ -10,7 +10,7 @@ function Inventory() {
 
   useEffect(() => {
     const getData = async () => {
-      let fetchedData = await window.api.product("get");
+      let fetchedData = await window.api.product("get", 9999999);
       setData(fetchedData);
     };
 
@@ -18,12 +18,12 @@ function Inventory() {
   }, []);
 
   return (
-    <div className="container pt-2 shadow">
+    <div className="container pt-2 ">
       <div className="mb-3">
         {/* <SearchBox /> */}
         <div className="row">
           <div className="col">
-            <div class="form-floating mb-3">
+            <div class="shadow form-floating mb-3">
               <input
                 type="email"
                 className="form-control"
@@ -47,7 +47,13 @@ function Inventory() {
           </div>
         </div>
       </div>
-      <Table data={filteredData} />
+      <div className="row">
+        <div className="col ">
+          <div className="card shadow  px-2">
+            <Table data={filteredData} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

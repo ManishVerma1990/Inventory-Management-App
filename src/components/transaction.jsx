@@ -8,50 +8,43 @@ function Transaction({ index, transaction, setShowReturn, setCurrentTransaction 
   }
   return (
     <>
-      <div style={transaction.transaction_type === "restock" ? styles2 : styles1} className="card mb-3 p-2 shadow-sm">
-        <div className="row">
-          <div className="col">
-            {transaction?.customer ? (
-              <>
-                <strong>Customer:</strong> {transaction.customer.name}
-              </>
-            ) : (
-              <>
-                <strong>Restock</strong>
-              </>
-            )}
+      <div key={index} className="col-lg-4 col-sm-6 mb-4 d-flex">
+        <div className="card shadow py-2 px-3 text-start w-100 h-100">
+          <h5 className="card-title">{transaction?.customer?.name ? transaction.customer.name : "Restock"}</h5>
+          <span className="card-subtitle mb-2 text-body-secondary">{transaction.date_time}</span>
+          <div className="card-body" style={{ maxHeight: "200px", overflowY: "auto" }}>
+            {transaction.sales.map((sale, idx) => (
+              <div key={idx} className="row">
+                <div className="col">
+                  {sale.product.name} ({sale.product.product_quantity}
+                  {sale.product.measuring_unit})
+                </div>
+                <div className="col">x{sale.items}</div>
+                <div className="col">&#x20B9;{sale.price}</div>
+              </div>
+            ))}
           </div>
-          <div className="col text-end">{transaction.date_time}</div>
-        </div>
-        <ul className="list-group list-group-flush">
-          {transaction.sales.map((sale, index) => (
-            <li key={index} className="list-group-item d-flex justify-content-between">
-              <span>
-                {sale.product.name}({sale.product.product_quantity}
-                {sale.product.measuring_unit}) &nbsp;&nbsp;&nbsp; X{sale.items}
-              </span>
-              <span>₹{sale.price}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="row p-3">
-          <div className="col">
-            <strong>Total: </strong>
+          <div className="row mt-2 px-2">
+            <div className="col">
+              <strong>Total:</strong>
+            </div>
+            <div className="col"></div>
+            <div className="col text-success">
+              &#x20B9;<strong>{totalPrice}</strong>
+            </div>
           </div>
-          <div className="col text-end">
-            <strong style={{ color: `${transaction.transaction_type === "restock" ? "darkred" : "green"}` }}>
-              {transaction.transaction_type === "restock" ? "-" : "+"} ₹{totalPrice}
-            </strong>
+          <div className="row pt-2 d-flex justify-content-end">
+            <button
+              className="btn  text-body-secondary"
+              style={{ width: "100px" }}
+              onClick={() => {
+                setCurrentTransaction(transaction);
+                setShowReturn(true);
+              }}
+            >
+              return
+            </button>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            setShowReturn(true);
-            setCurrentTransaction(transaction);
-          }}
-          className="btn btn-outline-warning"
-        >
-          Return
         </div>
       </div>
     </>

@@ -5,7 +5,6 @@ const dbTest = require("./dbTest");
 const productsModel = require("./models/productsModel");
 const transactionModel = require("./models/transactionModel");
 const queryModel = require("./models/queryModel");
-const { access } = require("fs");
 
 // const controller = require("./controller");
 // dbTest();
@@ -189,6 +188,9 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
       case "getSalesmenSuggestions":
         return await transactionModel.fetchSalesmenData(data);
 
+      case "getAllSalesmen":
+        return await transactionModel.fetchAllSalesmen(data);
+
       default:
         throw new Error(`Invalid action: ${action}`);
     }
@@ -200,23 +202,186 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
 
 ipcMain.handle("fetch", async (event, action, params = {}) => {
   try {
+    let result;
+    let grouped = {};
     switch (action) {
       case "getLowStockCount":
-        const result1 = (await queryModel.getLowStockCount())[0];
-        return result1.count;
+        result = (await queryModel.getLowStockCount())[0];
+        return result.count;
         break;
       case "getStocksCount":
-        const result2 = (await queryModel.getStocksCount())[0];
-        return result2.count;
+        result = (await queryModel.getStocksCount())[0];
+        return result.count;
         break;
       case "getTodaySalesCount":
-        const result3 = (await queryModel.getTodaySalesCount())[0];
-        return result3.count;
+        result = (await queryModel.getTodaySalesCount())[0];
+        return result.count;
         break;
       case "getTodaysRevenue":
-        const result4 = (await queryModel.getTodaysRevenue())[0];
-        return result4.count;
+        result = (await queryModel.getTodaysRevenue())[0];
+        return result.count;
         break;
+
+      //for report form
+      //Sales
+      case "getSales":
+        result = await queryModel.getSales(params.from, params.to);
+
+        for (const row of result) {
+          const id = row.transaction_id;
+          if (!grouped[id]) {
+            grouped[id] = {
+              transaction_id: id,
+              transaction_type: row.transaction_type,
+              date_time: row.date_time,
+              sname: row.sname,
+              cname: row.cname,
+              sales: [],
+            };
+          }
+          grouped[id].sales.push({
+            items: row.items,
+            price: row.price,
+            pname: row.pname,
+          });
+        }
+        return Object.values(grouped);
+        break;
+      case "getTopSellingProducts":
+        result = await queryModel.getTopSellingProducts(params.from, params.to);
+        return await queryModel.getTopSellingProducts(params.from, params.to);
+        break;
+      case "getSalesBySalesmen":
+        result = await queryModel.getSales(params.from, params.to);
+
+        for (const row of result) {
+          const sId = row.salesmen_id;
+          const tId = row.transaction_id;
+          if (!grouped[sId]) {
+            grouped[sId] = {
+              salesmenId: sId,
+              name: row.sname,
+              transactions: [],
+            };
+          }
+          // Find existing transaction
+          let transaction = grouped[sId].transactions.find((t) => t.transaction_id === tId);
+          if (!transaction) {
+            transaction = {
+              transaction_id: tId,
+              transaction_type: row.transaction_type,
+              date_time: row.date_time,
+              cname: row.cname,
+              sales: [],
+            };
+            grouped[sId].transactions.push(transaction);
+          }
+          // Add sale to the transaction
+          transaction.sales.push({
+            items: row.items,
+            price: row.price,
+            pname: row.pname,
+          });
+        }
+        return Object.values(grouped);
+        break;
+
+      //Profit/Loss
+      case "getProfitLossBySalesmen":
+        console.log(`${action} called`);
+        break;
+      case "getProfitLoss":
+        console.log(`${action} called`);
+        break;
+      case "getProfitLossByProduct":
+        console.log(`${action} called`);
+        break;
+
+      //Stocks
+      case "getStocks":
+        return await productsModel.fetchAllData();
+        break;
+      case "getLowStocks":
+        return await queryModel.getLowStocks();
+        break;
+      case "getOutOfStock":
+        return await queryModel.getOutOfStock();
+        break;
+      case "getReStocks":
+        return await queryModel.getReStocks("2025-04-20", "2025-04-27");
+        break;
+
+      //Salesmen
+      case "getSalesmen":
+        return await transactionModel.fetchAllSalesmen();
+        break;
+      case "getSalesmenCommission":
+        result = await queryModel.getSalesmenCommission(params.from, params.to);
+        for (let row of result) {
+          const id = row.salesmen_id;
+          if (!grouped[id]) {
+            grouped[id] = {
+              salesmenId: id,
+              name: row.sname,
+              totalCommission: row.commission * row.items,
+            };
+          } else {
+            let prevCommission = grouped[id].totalCommission;
+            grouped[id].totalCommission = prevCommission + row.commission * row.items;
+          }
+        }
+        return grouped;
+        break;
+      case "getDailySalesBySalesmen":
+        console.log(`${action} called`);
+        break;
+
+      //Customers
+      case "getCustomers":
+        return await queryModel.getCustomers();
+        break;
+      case "getPurchaseHistory":
+        result = await queryModel.getSales("2025-04-20", "2025-04-27");
+        for (const row of result) {
+          const cId = row.customer_id;
+          const tId = row.transaction_id;
+          if (!grouped[cId]) {
+            grouped[cId] = {
+              customerId: cId,
+              name: row.cname,
+              transactions: [],
+            };
+          }
+          // Find existing transaction
+          let transaction = grouped[cId].transactions.find((t) => t.transaction_id === tId);
+          if (!transaction) {
+            transaction = {
+              transaction_id: tId,
+              transaction_type: row.transaction_type,
+              date_time: row.date_time,
+              sname: row.sname,
+              sales: [],
+            };
+            grouped[cId].transactions.push(transaction);
+          }
+          // Add sale to the transaction
+          transaction.sales.push({
+            items: row.items,
+            price: row.price,
+            pname: row.pname,
+          });
+        }
+        return Object.values(grouped);
+        break;
+      case "getBestCustomers":
+        console.log(`${action} called`);
+        break;
+      case "getFrequentCustomers":
+        console.log(`${action} called`);
+        break;
+
+      default:
+        console.log(`${action} not defined`);
     }
   } catch (error) {}
 });

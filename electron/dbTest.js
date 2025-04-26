@@ -5,6 +5,8 @@ module.exports = () => {
   const path = require("path");
   const sqlite3 = require("@journeyapps/sqlcipher").verbose();
   const { createTable, fetchData, fetchAllData } = require("./models/productsModel");
+  const queryModel = require("./models/queryModel");
+  const transactionModel = require("./models/transactionModel");
   // const createTable = require("./transactionModel");
   const closeConn = () => {
     // Close the database connection properly
@@ -89,11 +91,13 @@ module.exports = () => {
       }
       console.log(" Encryption key set.");
     });
+
     let limit = 100;
-    db.all("SELECT * FROM transactions LIMIT ?", [limit], (err, rows) => {
-      if (err) throw err;
-      console.log(rows);
-    });
+    // db.all("SELECT * FROM transactions LIMIT ?", [limit], (err, rows) => {
+    //   if (err) throw err;
+    //   console.log(rows);
+    // });
+
     // tableInfo();
   });
 };

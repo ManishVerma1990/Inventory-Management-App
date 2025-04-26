@@ -158,11 +158,11 @@ const fetchFilteredData = (value, limit = 8) => {
   });
 };
 
-const fetchAllData = (limit) => {
+const fetchAllData = (limit = -1) => {
   return new Promise((resolve, reject) => {
     // Set encryption key for reading data
     db.run("PRAGMA key = 'Ma@7974561017';");
-    db.all("SELECT * FROM products LIMIT ?", [limit], (err, rows) => {
+    db.all("SELECT * FROM products ORDER BY name LIMIT ?", [limit], (err, rows) => {
       if (err) throw err;
       resolve(rows);
     });

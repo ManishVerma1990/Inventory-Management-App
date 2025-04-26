@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import Transaction from "../components/transaction";
 import Return from "../components/return";
 
-function Sales() {
+function Sales({ type = "all" }) {
   const [transactions, setTransactions] = useState([]);
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(type);
   const [showReturn, setShowReturn] = useState(false);
-  const [currentTransaction, setCurrentTransaction] = useState();
   const [key, setKey] = useState(0);
+  const [currentTransaction, setCurrentTransaction] = useState({});
 
   const forceRerender = () => {
     console.log("force rerender");
@@ -52,16 +52,18 @@ function Sales() {
       </div>
 
       {/* Render filtered transactions */}
-      {showReturn && <Return transaction={currentTransaction} setShowReturn={setShowReturn} forceRerender={forceRerender} />}
-      {filteredTransactions.map((transaction, index) => (
-        <Transaction
-          key={index}
-          index={index}
-          transaction={transaction}
-          setShowReturn={setShowReturn}
-          setCurrentTransaction={setCurrentTransaction}
-        />
-      ))}
+      {showReturn ? <Return transaction={currentTransaction} setShowReturn={setShowReturn} forceRerender={forceRerender} /> : ""}
+      <div className="row py-3">
+        {filteredTransactions.map((transaction, index) => (
+          <Transaction
+            key={index}
+            index={index}
+            transaction={transaction}
+            setShowReturn={setShowReturn}
+            setCurrentTransaction={setCurrentTransaction}
+          />
+        ))}
+      </div>
     </div>
   );
 }
