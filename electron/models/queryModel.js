@@ -276,7 +276,7 @@ function getSalesmenCommission(fromDate, toDate, limit = -1) {
     db.run("PRAGMA key = 'Ma@7974561017';");
 
     const query =
-      "SELECT s.salesmen_id, s.name AS sname, p.commission, p.name, sl.items FROM salesmen s" +
+      "SELECT s.salesmen_id, s.name AS sname, s.phn_no, s.address, p.commission, p.name, sl.items FROM salesmen s" +
       " JOIN transactions t ON t.salesmen_id = s.salesmen_id" +
       " JOIN sales_log sl ON sl.transaction_id = t.transaction_id" +
       " JOIN products p ON p.id = sl.product_id" +

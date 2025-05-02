@@ -1,10 +1,9 @@
 import { useState } from "react";
 import ReportPreview from "./reportPreview";
 
-function ReportForm() {
-  // const date = new Date();
-  // let dateString = `${date.getDate()}-${date.toLocaleString("default", { month: "short" })}-${date.getFullYear()}`;
 
+
+function ReportForm() {
   const getToday = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -17,6 +16,7 @@ function ReportForm() {
   const [errors, setErrors] = useState({});
   const [showReportPreview, setShowReportPreview] = useState(false);
   const [reportResult, setReportResult] = useState([]);
+  const [previewType, setPreviewType] = useState({ type: "1", name: "Top Selling Products" });
 
   const reportTypes = ["Sales", "Profit/Loss", "Stocks", "Salesmen", "Customer"];
   const getReportSubTypes = (value = formData.type) => {
@@ -61,10 +61,13 @@ function ReportForm() {
       case "Sales":
         if (myObj.subType === "sales") {
           result = await window.api.fetch("getSales", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "2", name: "Top Selling Products" });
         } else if (myObj.subType === "top selling products") {
           result = await window.api.fetch("getTopSellingProducts", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "1", name: "Top Selling Products" });
         } else if (myObj.subType === "salesmen wise") {
           result = await window.api.fetch("getSalesBySalesmen", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "3", name: "Top Selling Products" });
         } else {
           console.log("Object does not match");
         }
@@ -85,12 +88,16 @@ function ReportForm() {
       case "Stocks":
         if (myObj.subType === "summary") {
           result = await window.api.fetch("getStocks", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "1", name: "Top Selling Products" });
         } else if (myObj.subType === "low stocks") {
           result = await window.api.fetch("getLowStocks", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "1", name: "Top Selling Products" });
         } else if (myObj.subType === "out of stock") {
           result = await window.api.fetch("getOutOfStock", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "1", name: "Top Selling Products" });
         } else if (myObj.subType === "reStocks") {
           result = await window.api.fetch("getReStocks", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "2", name: "Top Selling Products" });
         } else {
           console.log("Object does not match");
         }
@@ -99,8 +106,10 @@ function ReportForm() {
       case "Salesmen":
         if (myObj.subType === "details") {
           result = await window.api.fetch("getSalesmen", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "1", name: "Top Selling Products" });
         } else if (myObj.subType === "commission") {
           result = await window.api.fetch("getSalesmenCommission", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "3", name: "Top Selling Products" });
         } else if (myObj.subType === "daily sales") {
           result = await window.api.fetch("getDailySalesBySalesmen", { from: formData.from, to: formData.to });
         } else {
@@ -111,8 +120,10 @@ function ReportForm() {
       case "Customer":
         if (myObj.subType === "details") {
           result = await window.api.fetch("getCustomers", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "1", name: "Top Selling Products" });
         } else if (myObj.subType === "purchase history") {
           result = await window.api.fetch("getPurchaseHistory", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "3", name: "Top Selling Products" });
         } else if (myObj.subType === "best customers") {
           result = await window.api.fetch("getBestCustomers", { from: formData.from, to: formData.to });
         } else if (myObj.subType === "frequent customers") {
@@ -125,7 +136,6 @@ function ReportForm() {
       default:
         console.log("heh:", formData);
     }
-    // console.log(result);
     setShowReportPreview(true);
     setReportResult(result);
   };
@@ -148,7 +158,11 @@ function ReportForm() {
 
   return (
     <>
-      {showReportPreview ? <ReportPreview data={reportResult} setShowReportPreview={setShowReportPreview} /> : ""}
+      {showReportPreview ? (
+        <ReportPreview previewType={previewType} data={reportResult} setShowReportPreview={setShowReportPreview} />
+      ) : (
+        ""
+      )}
       <div className={`container card shadow ${showReportPreview ? "blur-background" : ""}`}>
         <form className="needs-validation" noValidate>
           <div className="row my-3 ">

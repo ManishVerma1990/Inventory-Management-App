@@ -200,6 +200,35 @@ ipcMain.handle("logs", async (event, action, data = {}, log) => {
   }
 });
 
+const getFormattedData1 = (result) => {
+  let arr = [];
+  for (let i = 0; i < result.length; i++) {
+    let { name, product_quantity, measuring_unit, stock_quantity, min_stock, cost_price, selling_price, commission } = result[i];
+    arr[i] = {
+      name: `${name} (${product_quantity} ${measuring_unit})`,
+      stock_quantity,
+      min_stock,
+      cost_price,
+      selling_price,
+      commission,
+    };
+  }
+  return arr;
+};
+
+const getFormattedData2 = (result) => {
+  let arr = [];
+  for (let i = 0; i < result.length; i++) {
+    let { name, phn_no, address } = result[i];
+    arr[i] = {
+      name,
+      phn_no,
+      address,
+    };
+  }
+  return arr;
+};
+
 ipcMain.handle("fetch", async (event, action, params = {}) => {
   try {
     let result;
@@ -299,13 +328,16 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
 
       //Stocks
       case "getStocks":
-        return await productsModel.fetchAllData();
+        result = await productsModel.fetchAllData();
+        return getFormattedData1(result);
         break;
       case "getLowStocks":
-        return await queryModel.getLowStocks();
+        result = await queryModel.getLowStocks();
+        return getFormattedData1(result);
         break;
       case "getOutOfStock":
-        return await queryModel.getOutOfStock();
+        result = await queryModel.getOutOfStock();
+        return getFormattedData1(result);
         break;
       case "getReStocks":
         return await queryModel.getReStocks("2025-04-20", "2025-04-27");
@@ -313,7 +345,8 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
 
       //Salesmen
       case "getSalesmen":
-        return await transactionModel.fetchAllSalesmen();
+        result = await transactionModel.fetchAllSalesmen();
+        return getFormattedData2(result);
         break;
       case "getSalesmenCommission":
         result = await queryModel.getSalesmenCommission(params.from, params.to);
@@ -323,6 +356,8 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
             grouped[id] = {
               salesmenId: id,
               name: row.sname,
+              phnNO: row.phn_no,
+              address: address,
               totalCommission: row.commission * row.items,
             };
           } else {
@@ -330,7 +365,8 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
             grouped[id].totalCommission = prevCommission + row.commission * row.items;
           }
         }
-        return grouped;
+        console.log(grouped);
+        return Object.values(grouped);
         break;
       case "getDailySalesBySalesmen":
         console.log(`${action} called`);
@@ -338,10 +374,11 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
 
       //Customers
       case "getCustomers":
-        return await queryModel.getCustomers();
+        result = await queryModel.getCustomers();
+        return getFormattedData2(result);
         break;
       case "getPurchaseHistory":
-        result = await queryModel.getSales("2025-04-20", "2025-04-27");
+        result = await queryModel.getSales(params.from, params.to);
         for (const row of result) {
           const cId = row.customer_id;
           const tId = row.transaction_id;
@@ -375,9 +412,11 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
         break;
       case "getBestCustomers":
         console.log(`${action} called`);
+        return [];
         break;
       case "getFrequentCustomers":
         console.log(`${action} called`);
+        return [];
         break;
 
       default:

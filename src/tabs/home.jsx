@@ -4,12 +4,31 @@ import { FaShoppingCart, FaPlus, FaSync } from "react-icons/fa";
 import Stats from "../components/stats";
 import SmInventory from "../components/smInventory";
 import SmSales from "../components/smSales";
+import { useState } from "react";
+import ReportPreview from "../components/reportPreview";
 
 function Home() {
   // Send IPC request to main process
+  const [showReportPreview, setShowReportPreview] = useState(false);
+  const [reportResult, setReportResult] = useState([]);
+  const [previewType, setPreviewType] = useState({ type: "1", name: "Top Selling Products" });
+
+  const getTodaysRevenue = async () => {};
+  const getLowStock = async () => {
+    const result = await window.api.fetch("getLowStocks", {});
+    setReportResult(result);
+    setShowReportPreview(true);
+    setPreviewType({ type: "1", name: "Low Stocks" });
+    return;
+  };
 
   return (
     <div className="container text-center">
+      {showReportPreview ? (
+        <ReportPreview previewType={previewType} data={reportResult} setShowReportPreview={setShowReportPreview} />
+      ) : (
+        ""
+      )}
       <div className="mt-2">
         <SearchBox />
       </div>
@@ -48,11 +67,11 @@ function Home() {
         <div className="col  d-flex justify-content-center">
           <Stats title={"Sales today"} req={"getTodaySalesCount"} to={"/sales"} />
         </div>
-        <div className="col  d-flex justify-content-center">
+        <div onClick={getTodaysRevenue} className="col  d-flex justify-content-center">
           <Stats color={"green"} currency={true} title={"Today's revenue"} req={"getTodaysRevenue"} />
         </div>
-        <div className="col  d-flex justify-content-center">
-          <Stats color={"orange"} title={"Low stock"} req={"getLowStockCount"} to={"/lowStock"} />
+        <div onClick={getLowStock} className="col  d-flex justify-content-center">
+          <Stats color={"orange"} title={"Low stock"} req={"getLowStockCount"} />
         </div>
       </div>
 
