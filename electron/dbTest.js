@@ -93,10 +93,10 @@ module.exports = () => {
     });
 
     let limit = 100;
-    // db.all("SELECT * FROM transactions LIMIT ?", [limit], (err, rows) => {
-    //   if (err) throw err;
-    //   console.log(rows);
-    // });
+    db.all("SELECT * FROM transactions LIMIT ?", [limit], (err, rows) => {
+      if (err) throw err;
+      console.log(rows);
+    });
 
     // tableInfo();
   });

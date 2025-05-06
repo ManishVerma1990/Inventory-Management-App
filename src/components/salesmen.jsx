@@ -1,5 +1,6 @@
 import SalesmenTable from "./salesmenTable";
 import NewSalesmen from "./newSalesmen";
+import { useState } from "react";
 
 function Salesmen() {
   return (

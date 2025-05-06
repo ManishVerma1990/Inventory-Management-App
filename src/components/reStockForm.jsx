@@ -15,6 +15,7 @@ function ReStockForm() {
       stock_quantity: "",
       showSuggestions: false,
       showStock: false,
+      type: "restock",
     },
   ]);
   const [errors, setErrors] = useState({});
@@ -34,6 +35,7 @@ function ReStockForm() {
         commission: "",
         stock_quantity: "",
         showSuggestions: false,
+        type: "restock",
       },
     ]);
     const updatedProducts = products.map((product) => ({
@@ -99,6 +101,7 @@ function ReStockForm() {
               stock_quantity: data.stock_quantity,
               showSuggestions: false,
               showStock: true,
+              type: "restock",
             }
           : product
       )

@@ -1,22 +1,24 @@
-function RPreview3({ data =[] }) {
-  console.log(data);
+function RPreview3({ data = [], from, to }) {
   return (
     <>
+      <div className="mb-3 ">
+        Date: {from} to {to}{" "}
+      </div>
       <div className="row py-3">
         {data.map((customer, index) => (
           <div key={index}>
-            <h5>{customer.name}</h5>
+            <span className="fs-5 fw-semibold">{customer.name}</span>
             <>
-              <div className="row py-3">
+              <div className="row pt-1">
                 {customer.transactions.map((transaction, index) => {
                   let totalPrice = 0;
                   for (let i = 0; i < transaction.sales.length; i++) {
                     totalPrice += transaction.sales[i].price;
                   }
                   return (
-                    <div key={index} className="col-lg-4 col-sm-6 mb-4 d-flex">
+                    <div key={index} className="col-lg-4 col-sm-6 mb-1 d-flex">
                       <div className="card shadow py-2 px-3 text-start w-100 h-100" style={{ flex: 1, minHeight: "auto" }}>
-                        <h5 className="card-title">{transaction.cname}</h5>
+                        <h5 className="card-title fs-5">{transaction.cname}</h5>
                         <span className="card-subtitle mb-2 text-body-secondary">{transaction.date_time}</span>
                         <div className="card-body" style={{ maxHeight: "200px", overflowY: "auto" }}>
                           {transaction.sales.map((sale, idx) => (

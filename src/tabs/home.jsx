@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
 import SearchBox from "../components/searchBox";
-import { FaShoppingCart, FaPlus, FaSync } from "react-icons/fa";
 import Stats from "../components/stats";
 import SmInventory from "../components/smInventory";
 import SmSales from "../components/smSales";
 import { useState } from "react";
 import ReportPreview from "../components/reportPreview";
+// import escpos from "escpos";
+
+async function generateReceipt() {
+  // await window.api.generateReceipt();
+}
 
 function Home() {
   // Send IPC request to main process
@@ -86,6 +89,7 @@ function Home() {
           <SmSales />
         </div>
       </div>
+      {/* <button onClick={generatePDF}>Recipt</button> */}
     </div>
   );
 }

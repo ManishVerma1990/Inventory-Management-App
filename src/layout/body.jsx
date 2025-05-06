@@ -7,7 +7,6 @@ import NewProductForm from "../components/newProductForm";
 import SellProductForm from "../components/sellProductForm";
 import ReStockForm from "../components/reStockForm";
 import Salesmen from "../components/salesmen";
-import NewSalesmen from "../components/newSalesmen";
 
 function Body() {
   return (

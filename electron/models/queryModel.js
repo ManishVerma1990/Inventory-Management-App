@@ -3,6 +3,10 @@ const path = require("path");
 const sqlite3 = require("@journeyapps/sqlcipher").verbose();
 const dbPath = path.join(app.getPath("userData"), "inventory_encrypted.db");
 const db = new sqlite3.Database(dbPath);
+const transactionModel = require("./transactionModel");
+const productsModel = require("./productsModel");
+transactionModel.createTable();
+productsModel.createTable();
 
 function getProductsCount() {
   return new Promise((resolve, reject) => {
@@ -110,11 +114,10 @@ function getTodaysRevenue() {
 }
 
 function getSales(fromDate, toDate, limit = -1) {
-  let date = new Date(fromDate);
-  const from = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, 00:00:00 AM`;
-  date = new Date(toDate);
+  const from = new Date(fromDate).getTime();
+  const date = new Date(toDate); // e.g., "2025-05-02"
   date.setDate(date.getDate() + 1);
-  const to = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} 11:59:59 PM`;
+  const to = date.getTime();
 
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
@@ -126,7 +129,7 @@ function getSales(fromDate, toDate, limit = -1) {
       " JOIN customers c ON t.customer_id = c.customer_id " +
       " JOIN salesmen s ON t.salesmen_id = s.salesmen_id" +
       " WHERE t.transaction_type = ? AND t.date_time >= ? AND t.date_time <= ? LIMIT  ?";
-    db.all(query, ["sale", `${from}%`, `${to}%`, limit], (err, rows) => {
+    db.all(query, ["sale", from, to, limit], (err, rows) => {
       if (err) {
         reject(err); // Reject promise if error occurs
       } else {
@@ -137,11 +140,10 @@ function getSales(fromDate, toDate, limit = -1) {
 }
 
 function getTopSellingProducts(fromDate, toDate, limit = -1) {
-  let date = new Date(fromDate);
-  const from = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, 00:00:00 AM`;
-  date = new Date(toDate);
+  const from = new Date(fromDate).getTime();
+  const date = new Date(toDate); // e.g., "2025-05-02"
   date.setDate(date.getDate() + 1);
-  const to = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} 11:59:59 PM`;
+  const to = date.getTime();
 
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
@@ -152,7 +154,7 @@ function getTopSellingProducts(fromDate, toDate, limit = -1) {
       " JOIN transactions t ON sl.transaction_id = t.transaction_id" +
       " WHERE t.transaction_type = ? AND t.date_time >= ? AND t.date_time <= ?" +
       " GROUP BY p.name";
-    db.all(query, ["sale", `${from}`, `${to}`], (err, rows) => {
+    db.all(query, ["sale", from, to], (err, rows) => {
       if (err) {
         reject(err); // Reject promise if error occurs
       } else {
@@ -163,11 +165,10 @@ function getTopSellingProducts(fromDate, toDate, limit = -1) {
 }
 
 // function getSalesBySalesmen(fromDate, toDate, limit = -1) {
-//   let date = new Date(fromDate);
-//   const from = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, 00:00:00 AM`;
-//   date = new Date(toDate);
-//   date.setDate(date.getDate() + 1);
-//   const to = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} 11:59:59 PM`;
+//   const from = new Date(fromDate).getTime();
+// const date = new Date(toDate); // e.g., "2025-05-02"
+// date.setDate(date.getDate() + 1);
+// const to = date.getTime();
 
 //   return new Promise((resolve, reject) => {
 //     db.run("PRAGMA key = 'Ma@7974561017';");
@@ -188,27 +189,6 @@ function getTopSellingProducts(fromDate, toDate, limit = -1) {
 //     });
 //   });
 // }
-
-function getProfitLoss(fromDate, toDate, limit = -1) {
-  let date = new Date(fromDate);
-  const from = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, 00:00:00 AM`;
-  date = new Date(toDate);
-  date.setDate(date.getDate() + 1);
-  const to = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} 11:59:59 PM`;
-
-  return new Promise((resolve, reject) => {
-    db.run("PRAGMA key = 'Ma@7974561017';");
-
-    const query = "SELECT ";
-    db.all(query, ["sale", `${from}%`, `${to}%`, limit], (err, rows) => {
-      if (err) {
-        reject(err); // Reject promise if error occurs
-      } else {
-        resolve(rows);
-      }
-    });
-  });
-}
 
 function getLowStocks(fromDate, toDate, limit = -1) {
   return new Promise((resolve, reject) => {
@@ -241,11 +221,10 @@ function getOutOfStock(fromDate, toDate, limit = -1) {
 }
 
 function getReStocks(fromDate, toDate, limit = -1) {
-  let date = new Date(fromDate);
-  const from = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, 00:00:00 AM`;
-  date = new Date(toDate);
+  const from = new Date(fromDate).getTime();
+  const date = new Date(toDate); // e.g., "2025-05-02"
   date.setDate(date.getDate() + 1);
-  const to = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} 11:59:59 PM`;
+  const to = date.getTime();
 
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
@@ -266,11 +245,10 @@ function getReStocks(fromDate, toDate, limit = -1) {
 }
 
 function getSalesmenCommission(fromDate, toDate, limit = -1) {
-  let date = new Date(fromDate);
-  const from = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, 00:00:00 AM`;
-  date = new Date(toDate);
+  const from = new Date(fromDate).getTime();
+  const date = new Date(toDate); // e.g., "2025-05-02"
   date.setDate(date.getDate() + 1);
-  const to = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} 11:59:59 PM`;
+  const to = date.getTime();
 
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
@@ -307,17 +285,40 @@ function getCustomers(fromDate, toDate, limit = -1) {
 }
 
 function getCustomerPurchaseHistory(fromDate, toDate, limit = -1) {
-  let date = new Date(fromDate);
-  const from = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, 00:00:00 AM`;
-  date = new Date(toDate);
+  const from = new Date(fromDate).getTime();
+  const date = new Date(toDate); // e.g., "2025-05-02"
   date.setDate(date.getDate() + 1);
-  const to = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} 11:59:59 PM`;
+  const to = date.getTime();
 
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
 
     const query = "SELECT * FROM customers LIMIT ?";
     db.all(query, [limit], (err, rows) => {
+      if (err) {
+        reject(err); // Reject promise if error occurs
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+function getProfitLoss(fromDate, toDate, limit = -1) {
+  const from = new Date(fromDate).getTime();
+  const date = new Date(toDate); // e.g., "2025-05-02"
+  date.setDate(date.getDate() + 1);
+  const to = date.getTime();
+
+  return new Promise((resolve, reject) => {
+    db.run("PRAGMA key = 'Ma@7974561017';");
+
+    const query =
+      "SELECT t.transaction_id, p.id AS pid, p.name AS pname,  p.product_quantity, p.measuring_unit, p.cost_price, p.selling_price, s.items, s.price FROM transactions t" +
+      " JOIN sales_log s ON s.transaction_id = t.transaction_id " +
+      " JOIN products p ON s.product_id = p.id" +
+      " WHERE t.transaction_type = ? AND t.date_time >= ? AND t.date_time <= ? LIMIT  ?";
+    db.all(query, ["sale", from, to, limit], (err, rows) => {
       if (err) {
         reject(err); // Reject promise if error occurs
       } else {
@@ -343,4 +344,5 @@ module.exports = {
   getReStocks,
   getSalesmenCommission,
   getCustomers,
+  getProfitLoss,
 };

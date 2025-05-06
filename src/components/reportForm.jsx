@@ -1,8 +1,6 @@
 import { useState } from "react";
 import ReportPreview from "./reportPreview";
 
-
-
 function ReportForm() {
   const getToday = () => {
     const today = new Date();
@@ -26,13 +24,13 @@ function ReportForm() {
         subTypes = ["sales", "top selling products", "salesmen wise"];
         break;
       case "Profit/Loss":
-        subTypes = ["profit/loss", "product wise", "salesmen wise"];
+        subTypes = ["profit/loss" /* "product wise" */, , "salesmen wise"];
         break;
       case "Stocks":
         subTypes = ["summary", "low stocks", "out of stock", "reStocks"];
         break;
       case "Salesmen":
-        subTypes = ["details", "commission", "daily sales"];
+        subTypes = ["details", "commission" /* "daily sales" */];
         break;
       case "Customer":
         subTypes = ["details", "purchase history", "best customers", "frequent customers"];
@@ -61,13 +59,13 @@ function ReportForm() {
       case "Sales":
         if (myObj.subType === "sales") {
           result = await window.api.fetch("getSales", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "2", name: "Top Selling Products" });
+          setPreviewType({ type: "2", name: "Products Sold" });
         } else if (myObj.subType === "top selling products") {
           result = await window.api.fetch("getTopSellingProducts", { from: formData.from, to: formData.to });
           setPreviewType({ type: "1", name: "Top Selling Products" });
         } else if (myObj.subType === "salesmen wise") {
           result = await window.api.fetch("getSalesBySalesmen", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "3", name: "Top Selling Products" });
+          setPreviewType({ type: "3", name: "Sales by Salesmen" });
         } else {
           console.log("Object does not match");
         }
@@ -75,9 +73,11 @@ function ReportForm() {
 
       case "Profit/Loss":
         if (myObj.subType === "salesmen wise") {
-          result = await window.api.fetch("getProfitLossBySalesmen", { from: formData.from, to: formData.to });
+          result = await window.api.fetch("getSalesBySalesmen", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "3", name: "Sales by Salesmen" });
         } else if (myObj.subType === "profit/loss") {
           result = await window.api.fetch("getProfitLoss", { from: formData.from, to: formData.to });
+          setPreviewType({ type: "PL1", name: "Profit/Loss" });
         } else if (myObj.subType === "product wise") {
           result = await window.api.fetch("getProfitLossByProduct", { from: formData.from, to: formData.to });
         } else {
@@ -88,16 +88,16 @@ function ReportForm() {
       case "Stocks":
         if (myObj.subType === "summary") {
           result = await window.api.fetch("getStocks", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "1", name: "Top Selling Products" });
+          setPreviewType({ type: "1", name: "Stocks" });
         } else if (myObj.subType === "low stocks") {
           result = await window.api.fetch("getLowStocks", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "1", name: "Top Selling Products" });
+          setPreviewType({ type: "1", name: "Low Stocks" });
         } else if (myObj.subType === "out of stock") {
           result = await window.api.fetch("getOutOfStock", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "1", name: "Top Selling Products" });
+          setPreviewType({ type: "1", name: "Out of Stock" });
         } else if (myObj.subType === "reStocks") {
           result = await window.api.fetch("getReStocks", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "2", name: "Top Selling Products" });
+          setPreviewType({ type: "2", name: "Re-Stocks" });
         } else {
           console.log("Object does not match");
         }
@@ -106,10 +106,10 @@ function ReportForm() {
       case "Salesmen":
         if (myObj.subType === "details") {
           result = await window.api.fetch("getSalesmen", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "1", name: "Top Selling Products" });
+          setPreviewType({ type: "1", name: "Salesmen" });
         } else if (myObj.subType === "commission") {
           result = await window.api.fetch("getSalesmenCommission", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "3", name: "Top Selling Products" });
+          setPreviewType({ type: "3", name: "Salesmen Commission" });
         } else if (myObj.subType === "daily sales") {
           result = await window.api.fetch("getDailySalesBySalesmen", { from: formData.from, to: formData.to });
         } else {
@@ -120,10 +120,10 @@ function ReportForm() {
       case "Customer":
         if (myObj.subType === "details") {
           result = await window.api.fetch("getCustomers", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "1", name: "Top Selling Products" });
+          setPreviewType({ type: "1", name: "Customers" });
         } else if (myObj.subType === "purchase history") {
           result = await window.api.fetch("getPurchaseHistory", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "3", name: "Top Selling Products" });
+          setPreviewType({ type: "3", name: "Customers Purchase History" });
         } else if (myObj.subType === "best customers") {
           result = await window.api.fetch("getBestCustomers", { from: formData.from, to: formData.to });
         } else if (myObj.subType === "frequent customers") {
@@ -134,7 +134,6 @@ function ReportForm() {
         break;
 
       default:
-        console.log("heh:", formData);
     }
     setShowReportPreview(true);
     setReportResult(result);
@@ -159,7 +158,13 @@ function ReportForm() {
   return (
     <>
       {showReportPreview ? (
-        <ReportPreview previewType={previewType} data={reportResult} setShowReportPreview={setShowReportPreview} />
+        <ReportPreview
+          previewType={previewType}
+          data={reportResult}
+          from={formData.from}
+          to={formData.to}
+          setShowReportPreview={setShowReportPreview}
+        />
       ) : (
         ""
       )}

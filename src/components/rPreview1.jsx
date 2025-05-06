@@ -1,4 +1,4 @@
-function RPreview1({ data = [] }) {
+function RPreview1({ data = [], from, to }) {
   if (data.length < 1) return <></>;
   let columns = [];
   const arrange1 = (arr) => {
@@ -18,6 +18,9 @@ function RPreview1({ data = [] }) {
   columns = arrange(Object.keys(data[0]));
   return (
     <>
+      <div className="mb-3 ">
+        Date: {from} to {to}{" "}
+      </div>
       <table className="table table-hover">
         <thead>
           <tr>

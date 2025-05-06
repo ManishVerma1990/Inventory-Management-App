@@ -16,7 +16,7 @@ const createTable = () => {
     customer_id TEXT ,
     salesmen_id TEXT ,
     discount REAL DEFAULT 0,
-    date_time TEXT ,
+    date_time INTEGER NOT NULL,
     FOREIGN KEY (salesmen_id) REFERENCES salesmen(salesmen_id) ON DELETE CASCADE,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );`
@@ -84,13 +84,14 @@ const salesmenExists = (name) => {
 };
 
 const insertData = async (product, log) => {
+  createTable();
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
     const transactionId = v4();
 
     db.serialize(async () => {
       // Insert transaction record
-      const date = new Date();
+      const date = new Date().getTime();
       db.run("BEGIN TRANSACTION;");
       if (log.type != "restock") {
         let customerId = {};
@@ -132,7 +133,7 @@ const insertData = async (product, log) => {
         const sql3 = `INSERT INTO transactions (transaction_id, transaction_type, customer_id, salesmen_id, discount, date_time) VALUES (?, ?, ?, ?, ?, ?)`;
         db.run(
           sql3,
-          [transactionId, log.type, customerId.customer_id, salesmenId.salesmen_id, log?.discount ?? 0, date.toLocaleString()],
+          [transactionId, log.type, customerId.customer_id, salesmenId.salesmen_id, log?.discount ?? 0, date],
           function (err) {
             if (err) {
               console.log(err);
@@ -143,7 +144,7 @@ const insertData = async (product, log) => {
         );
       } else {
         const sql3 = `INSERT INTO transactions (transaction_id, transaction_type, date_time) VALUES (?, ?, ?)`;
-        db.run(sql3, [transactionId, log.type, date.toLocaleString()], function (err) {
+        db.run(sql3, [transactionId, log.type, date], function (err) {
           if (err) {
             console.log(err);
             db.run("ROLLBACK;");
@@ -182,6 +183,7 @@ const insertData = async (product, log) => {
 };
 
 const fetchAllTransactions = (limit = -1) => {
+  createTable();
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
     const sql = `SELECT * FROM transactions ORDER BY date_time DESC LIMIT ? `;
@@ -196,6 +198,7 @@ const fetchAllTransactions = (limit = -1) => {
 };
 
 const fetchAllLogs = (limit = -1) => {
+  createTable();
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
     const sql = `SELECT * FROM sales_log LIMIT ?`;
@@ -210,6 +213,7 @@ const fetchAllLogs = (limit = -1) => {
 };
 
 const fetchLogsByTransacton = (transaction_id) => {
+  createTable();
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
     const sql = `SELECT * FROM sales_log WHERE transaction_id = ? `;
@@ -300,10 +304,10 @@ const fetchAllSalesmen = (limit = -1) => {
 };
 
 const fetchSalesmenDataById = (id) => {
+  createTable();
   return new Promise((resolve, reject) => {
     // Set encryption key for reading data
     db.run("PRAGMA key = 'Ma@7974561017';");
-    createTable();
 
     const query = `SELECT salesmen_id, name, phn_no, address FROM salesmen WHERE salesmen_id=?`;
 

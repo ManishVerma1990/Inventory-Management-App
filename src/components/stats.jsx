@@ -3,11 +3,11 @@ import { NavLink } from "react-router-dom";
 
 function Stats({ title, req, color, currency, to }) {
   const [result, setResult] = useState(0);
-
   useEffect(() => {
     async function run() {
       const data = await window.api.fetch(req);
-      setResult(data);
+      if (data != null) setResult(data);
+      else setResult(0);
     }
     run();
   }, []);
