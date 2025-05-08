@@ -6,6 +6,7 @@ function Stats({ title, req, color, currency, to }) {
   useEffect(() => {
     async function run() {
       const data = await window.api.fetch(req);
+      console.log(data);
       if (data != null) setResult(data);
       else setResult(0);
     }

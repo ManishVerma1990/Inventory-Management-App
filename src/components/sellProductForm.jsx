@@ -2,6 +2,7 @@ import { useState } from "react";
 import Alert from "./alert";
 import Suggestions from "./suggestions";
 import Preview from "./preview";
+import jsPDF from "jspdf";
 
 function SellProductForm() {
   const [products, setProducts] = useState([
@@ -53,6 +54,7 @@ function SellProductForm() {
 
   const handleChange = async (index, e) => {
     const { name, value } = e.target;
+    if (Number(value) < 0) return;
 
     setProducts((prevProducts) =>
       prevProducts.map((product, i) =>
@@ -108,6 +110,77 @@ function SellProductForm() {
     );
   };
 
+  const generatePDF = (products, personDetails) => {
+    const doc = new jsPDF();
+
+    let y = 10;
+
+    doc.setFontSize(20);
+    let text = "KHETI KISANI";
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let textWidth = doc.getTextWidth(text);
+    let x = (pageWidth - textWidth) / 2;
+    doc.text(text, x, y);
+    y += 5;
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "thin");
+    text = "Address, of the, Shop";
+    textWidth = doc.getTextWidth(text);
+    x = (pageWidth - textWidth) / 2;
+    doc.text(text, x, y);
+    y += 10;
+
+    doc.setFontSize(12);
+    doc.text(`Bill Date: ${new Date().toLocaleString()}`, 10, y);
+    y += 5;
+    doc.text(`Customer name: ${personDetails.customerName}`, 10, y);
+    y += 5;
+    doc.text(`Phone no: ${personDetails.customerPhnNo}`, 10, y);
+    y += 10;
+
+    doc.setFont("helvetica", "bold");
+    doc.text("Name", 10, y);
+    doc.text("Qty", 60, y);
+    doc.text("Price", 100, y);
+    doc.text("Total", 140, y);
+    y += 5;
+
+    doc.setFont("helvetica", "normal");
+
+    let grandTotal = 0;
+    products.forEach((item) => {
+      const total = item.items * item.sellingPrice;
+      grandTotal += total;
+
+      doc.text(`${item.name} (${item.quantity.toString()} ${item.measuringUnit})`, 10, y);
+      doc.text(item.items.toString(), 60, y);
+      doc.text(`${item.sellingPrice}`, 100, y);
+      doc.text(`${total}`, 140, y);
+      y += 8;
+    });
+
+    y += 10;
+    doc.setFont("helvetica", "bold");
+    doc.text(`Grand Total: ₹${grandTotal}`, 100, y);
+
+    doc.save("receipt.pdf");
+  };
+
+  const stockError = (products) => {
+    for (let product of products) {
+      if (Number(product.items) > Number(product.stock_quantity)) {
+        setAlert({
+          success: false,
+          message: `Not enough stock for ${product.name}. Available: ${product.stock_quantity}, Requested: ${product.items}`,
+        });
+        setShowAlert(true);
+        return true;
+      }
+    }
+    return false;
+  };
+
   const handleSubmit = (e, personDetails = {}, discount = 0) => {
     e.preventDefault();
     let newErrors = {};
@@ -121,14 +194,8 @@ function SellProductForm() {
       if (!String(product.commission).trim()) newErrors[`price-${index}`] = "Commission is required";
 
       // Check if stock is less than requested items
-      if (Number(product.items) > Number(product.stock_quantity)) {
-        hasStockError = true;
-        setAlert({
-          success: false,
-          message: `Not enough stock for ${product.name}. Available: ${product.stock_quantity}, Requested: ${product.items}`,
-        });
-        setShowAlert(true);
-      }
+      hasStockError = stockError(products);
+      console.log(hasStockError);
     });
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -136,6 +203,7 @@ function SellProductForm() {
     }
     if (!hasStockError) {
       sendFormData(personDetails, discount);
+      generatePDF(products, personDetails);
     }
   };
 
@@ -243,6 +311,7 @@ function SellProductForm() {
                       id={`items-${index}`}
                       placeholder="No of Items"
                       name="items"
+                      min="0"
                       required
                     />
                     <label htmlFor={`items-${index}`}>Items</label>
@@ -296,7 +365,10 @@ function SellProductForm() {
           <button
             type="button"
             className={`btn btn-outline-primary mx-2 ${products[0].quantity === "" ? "disabled" : ""}`}
-            onClick={() => setShowPreview(true)}
+            onClick={() => {
+              if (stockError(products)) return;
+              setShowPreview(true);
+            }}
           >
             Sell Items
           </button>

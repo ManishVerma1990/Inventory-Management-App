@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 function SmSales() {
-  const [transactions, setTransactions] = useState([]);
+  const [unfilteredTransactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -11,6 +11,13 @@ function SmSales() {
     };
     fetchTransactions();
   }, []);
+
+  let transactions = [];
+
+  for (let ts of unfilteredTransactions) {
+    if (ts.transaction_type === "restock") continue;
+    transactions.push(ts);
+  }
 
   let totalPrices = [];
   for (let j = 0; j < transactions.length; j++) {

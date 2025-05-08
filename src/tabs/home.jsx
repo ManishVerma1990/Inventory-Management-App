@@ -1,9 +1,12 @@
 import SearchBox from "../components/searchBox";
 import Stats from "../components/stats";
-import SmInventory from "../components/smInventory";
+// import SmInventory from "../components/smInventory";
 import SmSales from "../components/smSales";
 import { useState } from "react";
 import ReportPreview from "../components/reportPreview";
+import { FaShoppingCart, FaSync, FaPlus, FaFileAlt } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
+
 // import escpos from "escpos";
 
 async function generateReceipt() {
@@ -36,35 +39,8 @@ function Home() {
         <SearchBox />
       </div>
 
-      {/* <div className="row justify-content-center">
-        <div className="col col-lg-3 col-md-4">
-          <Link to="/sellProduct" type="button" className="shadow btn btn-lg btn-outline-primary m-3">
-            <span style={{ fontSize: "1.6rem" }}>
-              <FaShoppingCart />{" "}
-            </span>{" "}
-            Sell Items
-          </Link>
-        </div>
-        <div className="col col-lg-3 col-md-4">
-          <Link to="/reStock" type="button" className="shadow btn btn-lg btn-outline-success m-3">
-            <span style={{ fontSize: "1.4rem" }}>
-              <FaSync />{" "}
-            </span>{" "}
-            Re-Stock
-          </Link>
-        </div>
-        <div className="col col-lg-3 col-md-4">
-          <Link to="/newProduct" type="button" className="shadow btn btn-lg btn-primary m-3">
-            <span style={{ fontSize: "1.4rem" }}>
-              <FaPlus />
-            </span>{" "}
-            New Item
-          </Link>
-        </div>
-      </div> */}
-
       <div className="row justify-content-around mt-3">
-        <div className="col  d-flex justify-content-center">
+        <div className="col d-flex justify-content-center">
           <Stats title={"Total stock"} req={"getStocksCount"} to={"/stocks"} />
         </div>
         <div className="col  d-flex justify-content-center">
@@ -79,10 +55,53 @@ function Home() {
       </div>
 
       <div className="row mb-3">
+        <span className="m-3 shadow col p-0" style={{ backgroundColor: "white", borderRadius: "9px" }}>
+          <NavLink to={"/sellProduct"}>
+            <button className=" btn btn-outline-dark w-100 h-100" style={{ fontSize: "1.2rem" }}>
+              <span className="me-3" style={{ fontSize: "1.375rem" }}>
+                <FaShoppingCart />
+              </span>
+              Sell Items
+            </button>
+          </NavLink>
+        </span>
+        <span className="m-3 shadow col p-0" style={{ backgroundColor: "white", borderRadius: "9px" }}>
+          <NavLink to={"/reStock"}>
+            <button className=" btn btn-outline-dark w-100 h-100" style={{ fontSize: "1.2rem" }}>
+              <span className="me-3" style={{ fontSize: "1.375rem" }}>
+                <FaSync />
+              </span>
+              Restock Items
+            </button>
+          </NavLink>
+        </span>
+        <span className="m-3 shadow col p-0" style={{ backgroundColor: "white", borderRadius: "9px" }}>
+          <NavLink to={"/newProduct"}>
+            <button className=" btn btn-outline-dark w-100 h-100" style={{ fontSize: "1.2rem" }}>
+              <span className="me-3" style={{ fontSize: "1.375rem" }}>
+                <FaPlus />
+              </span>
+              New Item
+            </button>
+          </NavLink>
+        </span>
+        <span className="m-3 shadow col p-0" style={{ backgroundColor: "white", borderRadius: "9px" }}>
+          <NavLink to={"/reports"}>
+            <button className=" btn btn-outline-dark w-100 h-100" style={{ fontSize: "1.2rem" }}>
+              <span className="me-3" style={{ fontSize: "1.375rem" }}>
+                <FaFileAlt />
+              </span>
+              Genereate Report
+            </button>
+          </NavLink>
+        </span>
+      </div>
+
+      {/* <div className="row mb-3">
         <div className="col">
           <SmInventory />
         </div>
-      </div>
+      </div> */}
 
       <div className="row mb-3">
         <div className="col">

@@ -42,8 +42,8 @@ function ReStockForm() {
       ...product,
       items: Math.abs(Number(product.items)).toString(),
     }));
-    const result = await window.api.product("put", updatedProducts);
 
+    const result = await window.api.product("put", updatedProducts);
     setShowAlert(true);
     setAlert(result);
     setTimeout(() => setShowAlert(false), 3000);
@@ -52,6 +52,7 @@ function ReStockForm() {
 
   const handleChange = async (index, e) => {
     const { name, value } = e.target;
+    if (Number(value) < 0) return;
 
     setProducts((prevProducts) =>
       prevProducts.map((product, i) =>
@@ -119,16 +120,6 @@ function ReStockForm() {
       if (!String(product.items).trim()) newErrors[`items-${index}`] = "Items is required";
       if (!String(product.sellingPrice).trim()) newErrors[`price-${index}`] = "Price is required";
       if (!String(product.commission).trim()) newErrors[`price-${index}`] = "Commission is required";
-
-      // Check if stock is less than requested items
-      if (Number(product.items) > Number(product.stock_quantity)) {
-        hasStockError = true;
-        setAlert({
-          success: false,
-          message: `Not enough stock for ${product.name}. Available: ${product.stock_quantity}, Requested: ${product.items}`,
-        });
-        setShowAlert(true);
-      }
     });
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);

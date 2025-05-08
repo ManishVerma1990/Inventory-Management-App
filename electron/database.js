@@ -116,7 +116,7 @@ ipcMain.handle("product", async (event, action, data = {}, salsemenData = {} /* 
 
       // used to update rows when product is sold or restocked
       case "put":
-        if (!(await transactionModel.salesmenExists(salsemenData)) && data[0].type === "restock") {
+        if (!(await transactionModel.salesmenExists(salsemenData)) && data[0].type != "restock") {
           return { success: false, message: "Salesmen doesn't exists! " };
         }
 
@@ -446,7 +446,7 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
               salesmenId: id,
               name: row.sname,
               phnNO: row.phn_no,
-              address: address,
+              address: row.address,
               totalCommission: row.commission * row.items,
             };
           } else {
@@ -454,7 +454,6 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
             grouped[id].totalCommission = prevCommission + row.commission * row.items;
           }
         }
-        console.log(grouped);
         return Object.values(grouped);
         break;
       case "getDailySalesBySalesmen":

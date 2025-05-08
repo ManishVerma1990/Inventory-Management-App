@@ -40,6 +40,7 @@ function NewProductForm() {
   };
 
   const handleChange = async (e, data) => {
+    if (Number(e.target.value) < 0) return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
     if (e.target.name === "name") {
@@ -154,7 +155,7 @@ function NewProductForm() {
               </div>
             </div>
           </div>
-          <div className="row mb-3">
+          {/* <div className="row mb-3">
             <div className="col">
               <div className="form-floating">
                 <textarea
@@ -182,7 +183,7 @@ function NewProductForm() {
                 <label htmlFor="category">category</label>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="row mb-3">
             <div className="col">
               <div className="form-floating">

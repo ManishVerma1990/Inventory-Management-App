@@ -51,12 +51,15 @@ function getTodayTransactionsCount() {
 }
 
 function getTodaySalesCount() {
+  const today = new Date();
+  const from = new Date(`${today.getMonth() + 1}-${today.getDate()}-${today.getFullYear()}`).getTime();
+  const to = new Date(`${today.getMonth() + 1}-${today.getDate() + 1}-${today.getFullYear()}`).getTime();
+
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
-    const today = new Date();
-    const formattedDate = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
-    const query = `SELECT COUNT(*) AS count FROM sales_log s JOIN transactions t ON s.transaction_id = t.transaction_id WHERE t.date_time LIKE ?;`;
-    db.all(query, [`${formattedDate}%`], (err, rows) => {
+
+    const query = `SELECT COUNT(*) AS count FROM sales_log s JOIN transactions t ON s.transaction_id = t.transaction_id WHERE t.date_time >= ? AND t.date_time <= ? ;`;
+    db.all(query, [from, to], (err, rows) => {
       if (err) {
         reject(err); // Reject promise if error occurs
       } else {
@@ -97,13 +100,16 @@ function getLowStockCount() {
 }
 
 function getTodaysRevenue() {
+  const today = new Date();
+  const from = new Date(`${today.getMonth() + 1}-${today.getDate()}-${today.getFullYear()}`).getTime();
+  const to = new Date(`${today.getMonth() + 1}-${today.getDate() + 1}-${today.getFullYear()}`).getTime();
+
   return new Promise((resolve, reject) => {
     db.run("PRAGMA key = 'Ma@7974561017';");
-    const today = new Date();
-    const formattedDate = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+
     const query =
-      "SELECT SUM(s.price) AS count FROM sales_log s JOIN transactions t ON s.transaction_id=t.transaction_id WHERE t.transaction_type=? AND t.date_time LIKE ?;";
-    db.all(query, ["sale", `${formattedDate}%`], (err, rows) => {
+      "SELECT SUM(s.price) AS count FROM sales_log s JOIN transactions t ON s.transaction_id=t.transaction_id WHERE t.transaction_type=? AND t.date_time >= ? AND t.date_time <= ?;";
+    db.all(query, ["sale", from, to], (err, rows) => {
       if (err) {
         reject(err); // Reject promise if error occurs
       } else {
@@ -246,7 +252,7 @@ function getReStocks(fromDate, toDate, limit = -1) {
 
 function getSalesmenCommission(fromDate, toDate, limit = -1) {
   const from = new Date(fromDate).getTime();
-  const date = new Date(toDate); // e.g., "2025-05-02"
+  const date = new Date(toDate);
   date.setDate(date.getDate() + 1);
   const to = date.getTime();
 
@@ -261,7 +267,7 @@ function getSalesmenCommission(fromDate, toDate, limit = -1) {
       " WHERE t.transaction_type = ?";
     db.all(query, ["sale"], (err, rows) => {
       if (err) {
-        reject(err); // Reject promise if error occurs
+        reject(err);
       } else {
         resolve(rows);
       }
@@ -306,7 +312,7 @@ function getCustomerPurchaseHistory(fromDate, toDate, limit = -1) {
 
 function getProfitLoss(fromDate, toDate, limit = -1) {
   const from = new Date(fromDate).getTime();
-  const date = new Date(toDate); // e.g., "2025-05-02"
+  const date = new Date(toDate);
   date.setDate(date.getDate() + 1);
   const to = date.getTime();
 
@@ -320,7 +326,7 @@ function getProfitLoss(fromDate, toDate, limit = -1) {
       " WHERE t.transaction_type = ? AND t.date_time >= ? AND t.date_time <= ? LIMIT  ?";
     db.all(query, ["sale", from, to, limit], (err, rows) => {
       if (err) {
-        reject(err); // Reject promise if error occurs
+        reject(err);
       } else {
         resolve(rows);
       }

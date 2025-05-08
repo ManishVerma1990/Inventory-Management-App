@@ -30,7 +30,7 @@ function createWindow() {
     icon: getIcon(),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      // devTools: true,
+      devTools: true,
       nodeIntegration: false, // Enable Node.js integration in renderer (use with caution)
       contextIsolation: true,
     },
@@ -38,9 +38,9 @@ function createWindow() {
 
   Menu.setApplicationMenu(null);
 
-  // mainWindow.loadURL("http://localhost:5173");
-  // mainWindow.webContents.openDevTools();
-  mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
+  mainWindow.loadURL("http://localhost:5173");
+  mainWindow.webContents.openDevTools();
+  // mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
 
   mainWindow.on("close", (event) => {
     event.preventDefault(); // Prevent default close action

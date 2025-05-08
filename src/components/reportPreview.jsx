@@ -33,18 +33,18 @@ function downloadReportAsPDF() {
   });
 }
 
-function ReportPreview({ previewType, data, from, to, setShowReportPreview }) {
+function ReportPreview({ previewType, data = [], from, to, setShowReportPreview }) {
   return (
     <div className="modal-overlay">
       <div
-        className="preview-box"
+        className="preview-box "
         style={{
           maxHeight: "90vh",
           overflowY: "auto",
           minWidth: "35rem",
           width: "auto",
           position: "relative",
-          overflowX: "hidden",
+          overflowX: "auto",
         }}
       >
         <div id="reportToBePrinted">

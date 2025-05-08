@@ -2,15 +2,14 @@ import { useState } from "react";
 import ReportPreview from "./reportPreview";
 
 function ReportForm() {
-  const getToday = () => {
-    const today = new Date();
+  const getThisDate = (today = new Date()) => {
     const year = today.getFullYear();
     const month = `${today.getMonth() + 1}`.padStart(2, "0");
     const day = `${today.getDate()}`.padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
-  const [formData, setFormData] = useState({ type: "Sales", subType: "sales", from: getToday(), to: getToday() });
+  const [formData, setFormData] = useState({ type: "Sales", subType: "sales", from: getThisDate(), to: getThisDate() });
   const [errors, setErrors] = useState({});
   const [showReportPreview, setShowReportPreview] = useState(false);
   const [reportResult, setReportResult] = useState([]);
@@ -33,7 +32,7 @@ function ReportForm() {
         subTypes = ["details", "commission" /* "daily sales" */];
         break;
       case "Customer":
-        subTypes = ["details", "purchase history", "best customers", "frequent customers"];
+        subTypes = ["details", "purchase history" /* "best customers", "frequent customers" */];
         break;
       default:
         subTypes = ["sales", "top selling products", "type3"];
@@ -109,7 +108,7 @@ function ReportForm() {
           setPreviewType({ type: "1", name: "Salesmen" });
         } else if (myObj.subType === "commission") {
           result = await window.api.fetch("getSalesmenCommission", { from: formData.from, to: formData.to });
-          setPreviewType({ type: "3", name: "Salesmen Commission" });
+          setPreviewType({ type: "1", name: "Salesmen Commission" });
         } else if (myObj.subType === "daily sales") {
           result = await window.api.fetch("getDailySalesBySalesmen", { from: formData.from, to: formData.to });
         } else {
@@ -153,6 +152,28 @@ function ReportForm() {
     }
 
     sendFormData();
+  };
+
+  const handleDateChange = (e, timeLine) => {
+    const today = new Date();
+    let formatted, from, to;
+    switch (timeLine) {
+      case "today":
+        formatted = today.toISOString().split("T")[0];
+        setFormData({ ...formData, from: formatted, to: formatted });
+        break;
+      case "month":
+        from = new Date(today.getFullYear(), today.getMonth(), 2).toISOString().split("T")[0];
+        to = new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString().split("T")[0];
+        setFormData({ ...formData, from: from, to: to });
+        break;
+      case "year":
+        from = new Date(today.getFullYear(), 0, 2).toISOString().split("T")[0];
+        to = new Date(today.getFullYear() + 1, 0, 1).toISOString().split("T")[0];
+
+        setFormData({ ...formData, from: from, to: to });
+        break;
+    }
   };
 
   return (
@@ -215,7 +236,7 @@ function ReportForm() {
               </div>
             </div>
           </div>
-          <div className="row mb-3">
+          <div className="row mb-1">
             <div className="col">
               <div className="form-floating" style={{ position: "relative" }}>
                 <input
@@ -250,8 +271,34 @@ function ReportForm() {
             </div>
           </div>
         </form>
+        <div>
+          <button
+            className="btn"
+            onClick={(e) => {
+              handleDateChange(e, "today");
+            }}
+          >
+            This day
+          </button>
+          <button
+            className="btn"
+            onClick={(e) => {
+              handleDateChange(e, "month");
+            }}
+          >
+            This month
+          </button>
+          <button
+            className="btn"
+            onClick={(e) => {
+              handleDateChange(e, "year");
+            }}
+          >
+            This year
+          </button>
+        </div>
         <div className="row mb-3 d-flex justify-content-end">
-          <button onClick={handleSubmit} className="btn me-4" style={{ width: "100px" }}>
+          <button onClick={handleSubmit} className="btn btn-primary me-4" style={{ width: "100px" }}>
             create
           </button>
         </div>

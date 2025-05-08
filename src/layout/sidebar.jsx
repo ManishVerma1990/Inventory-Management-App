@@ -16,7 +16,7 @@ function Sidebar() {
       <ul className="nav">
         {[
           { name: "Home", icon: <FaHome />, path: "/" },
-          // { name: "Stocks", icon: <FaWarehouse />, path: "/stocks" },
+          { name: "Stocks", icon: <FaWarehouse />, path: "/stocks" },
           // { name: "Sales", icon: <FaChartLine />, path: "/sales" },
           { name: "Sell Item", icon: <FaShoppingCart />, path: "/sellProduct" },
           { name: "Restock", icon: <FaSync />, path: "/reStock" },

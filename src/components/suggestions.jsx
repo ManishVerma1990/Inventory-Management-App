@@ -1,5 +1,4 @@
 function Suggestions({ values, callback }) {
-  console.log(values);
   return (
     <>
       <ul className="suggestions-list">
