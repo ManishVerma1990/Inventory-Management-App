@@ -132,7 +132,7 @@ ipcMain.handle("product", async (event, action, data = {}, salsemenData = {} /* 
               continue;
             }
 
-            const result1 = await productsModel.update.quantity(id_, product.items);
+            const result1 = await productsModel.update(id_, product.items, product.sellingPrice);
 
             if (result1?.success) {
               successCount++;
@@ -513,36 +513,73 @@ ipcMain.handle("fetch", async (event, action, params = {}) => {
   } catch (error) {}
 });
 
-ipcMain.handle("generateReceipt", () => {
-  console.log("got req");
-  const escpos = require("escpos");
+function formatRow(name, qty, price) {
+  const col1Width = 14; // Item name
+  const col2Width = 5; // Qty
+  const col3Width = 7; // Price
 
-  // For USB printers
-  escpos.USB = require("escpos-usb");
+  const col1 = name.padEnd(col1Width, " ");
+  const col2 = String(qty).padStart(col2Width, " ");
+  const col3 = `₹${price}`.padStart(col3Width, " ");
 
-  // Select the adapter for your printer type
-  const device = new escpos.USB(); // or new escpos.Serial('/dev/usb/lp0') or escpos.Network(...)
+  return `${col1}${col2}${col3}`;
+}
 
-  const options = { encoding: "GB18030" /* default */ };
-  const printer = new escpos.Printer(device, options);
+ipcMain.handle("generateReceipt", (event, items) => {
+  const formattedItems =
+    formatRow("Items", "Qty", "Price") +
+    "\n" +
+    items.map((item) => formatRow(item.name, item.quantity, item.sellingPrice * item.quantity)).join("\n");
+  const total = items.reduce((sum, item) => sum + item.sellingPrice * item.quantity, 0);
+  const formattedTotal = formatRow("Total", "", total);
+  const receipt = `${formattedItems}\n${"-".repeat(30)}\n${formattedTotal}`;
+  console.log("\n", receipt);
 
-  // Now open the connection and print
-  device.open(function () {
-    printer
-      .align("CT") // Center align
-      .style("B") // Bold text
-      .size(1, 1) // Text size
-      .text("RECEIPT")
-      .text("-------------")
-      .align("LT") // Left align
-      .text("Item 1    $10")
-      .text("Item 2    $15")
-      .text("-------------")
-      .align("RT") // Right align
-      .text("Total: $25")
-      .cut()
-      .close();
-  });
+  try {
+    const escpos = require("escpos");
+    // escpos.Bluetooth = require("escpos-bluetooth");
+    escpos.USB = require("escpos-usb");
+    const device = new escpos.USB(); // or new escpos.Serial('/dev/usb/lp0') or escpos.Network(...)
+    const printer = new escpos.Printer(device);
+
+    // const bluetoothDevice = new escpos.Bluetooth("01:23:45:67:89:AB", 1);
+    // const bluetoothPrinter = new escpos.Printer(bluetoothDevice);
+
+    // const options = { encoding: "GB18030" /* default */ };
+    // const printer = new escpos.Printer(device, options);
+
+    // Now open the connection and print
+    // bluetoothDevice.open(function () {
+    //   bluetoothPrinter
+    //     .align("CT") // Center align
+    //     .style("B") // Bold text
+    //     .size(1, 1) // Text size
+    //     .text("RECEIPT")
+    //     .text("-------------")
+    //     .align("LT") // Left align
+    //     .text("Item 1    $10")
+    //     .text("Item 2    $15")
+    //     .text("-------------")
+    //     .align("RT") // Right align
+    //     .text("Total: $25")
+    //     .cut()
+    //     .close();
+    // });
+
+    device.open(() => {
+      printer
+        .align("CT")
+        .text(" Receipt")
+        .text("---------------------")
+        .text(receipt)
+        .text("---------------------")
+        .text("Thank you!")
+        .cut()
+        .close();
+    });
+  } catch (error) {
+    console.error("Error generating receipt:", error);
+  }
 });
 
 module.exports = { db };

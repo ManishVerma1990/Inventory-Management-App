@@ -110,7 +110,7 @@ function NewProductForm() {
                     }, 300)
                   }
                 />
-                <label htmlFor="name">Name</label>
+                <label htmlFor="name">Product name</label>
                 {showSuggestions ? <Suggestions values={values} callback={handleListClick} /> : ""}
                 {errors.name && <div className="invalid-feedback">{errors.name}</div>}
               </div>
@@ -128,7 +128,7 @@ function NewProductForm() {
                       placeholder="quantity of 1 item"
                       name="quantity"
                     />
-                    <label htmlFor="quantity">quantity</label>
+                    <label htmlFor="quantity">Product quantity</label>
                     {errors.quantity && <div className="invalid-feedback">{errors.quantity}</div>}
                   </div>
                 </div>
@@ -196,7 +196,7 @@ function NewProductForm() {
                   placeholder="items to be added"
                   name="items"
                 />
-                <label htmlFor="items">items</label>
+                <label htmlFor="items">Number of items</label>
                 {errors.items && <div className="invalid-feedback">{errors.items}</div>}
               </div>
             </div>
@@ -215,7 +215,7 @@ function NewProductForm() {
                     placeholder="commission to be added"
                     name="commission"
                   />
-                  <label htmlFor="commission">Commission</label>
+                  <label htmlFor="commission">Salesmen commission</label>
                   {errors.commission && <div className="invalid-feedback">{errors.commission}</div>}
                 </div>
               </div>
@@ -237,7 +237,7 @@ function NewProductForm() {
                     placeholder="costPrice"
                     name="costPrice"
                   />
-                  <label htmlFor="costPrice">cost price</label>
+                  <label htmlFor="costPrice">Cost price</label>
                   {errors.costPrice && <div className="invalid-feedback">{errors.costPrice}</div>}
                 </div>
               </div>
@@ -257,7 +257,7 @@ function NewProductForm() {
                     placeholder="sellingPrice"
                     name="sellingPrice"
                   />
-                  <label htmlFor="sellingPrice">selling price</label>
+                  <label htmlFor="sellingPrice">Selling price</label>
                   {errors.sellingPrice && <div className="invalid-feedback">{errors.sellingPrice}</div>}
                 </div>
               </div>
@@ -275,7 +275,7 @@ function NewProductForm() {
                   placeholder="minStock to be added"
                   name="minStock"
                 />
-                <label htmlFor="minStock">minStock</label>
+                <label htmlFor="minStock">Minimum stock</label>
                 {errors.minStock && <div className="invalid-feedback">{errors.minStock}</div>}
               </div>
             </div>

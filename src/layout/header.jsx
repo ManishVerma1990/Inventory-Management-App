@@ -26,10 +26,13 @@ function Header() {
         break;
       case "/salesmen":
         name = "Salesmen";
+        break;
       case "/reStock":
         name = "Restock";
+        break;
       case "/salesmen/new":
         name = "New Salesmen";
+        break;
     }
     return name;
   };

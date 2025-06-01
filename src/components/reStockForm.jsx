@@ -41,6 +41,7 @@ function ReStockForm() {
     const updatedProducts = products.map((product) => ({
       ...product,
       items: Math.abs(Number(product.items)).toString(),
+      price: Math.abs(Number(product.sellingPrice)).toString(),
     }));
 
     const result = await window.api.product("put", updatedProducts);
@@ -175,7 +176,7 @@ function ReStockForm() {
                       }
                       required
                     />
-                    <label htmlFor={`name-${index}`}>Name</label>
+                    <label htmlFor={`name-${index}`}>Product name</label>
                     {product.showSuggestions && <Suggestions values={values} callback={(value) => handleListClick(index, value)} />}
                     {errors[`name-${index}`] && <div className="invalid-feedback">{errors[`name-${index}`]}</div>}
                   </div>
@@ -195,7 +196,7 @@ function ReStockForm() {
                           disabled
                           readOnly
                         />
-                        <label htmlFor={`quantity-${index}`}>Quantity</label>
+                        <label htmlFor={`quantity-${index}`}>product quantity</label>
                         {errors[`quantity-${index}`] && <div className="invalid-feedback">{errors[`quantity-${index}`]}</div>}
                       </div>
                     </div>
@@ -237,7 +238,7 @@ function ReStockForm() {
                       name="items"
                       required
                     />
-                    <label htmlFor={`items-${index}`}>Items</label>
+                    <label htmlFor={`items-${index}`}>Number of items</label>
                     {errors[`items-${index}`] && <div className="invalid-feedback">{errors[`items-${index}`]}</div>}
                   </div>
                 </div>
@@ -254,29 +255,22 @@ function ReStockForm() {
                         className={`form-control ${errors[`price-${index}`] ? "is-invalid" : product.price ? "is-valid" : ""}`}
                         id={`price-${index}`}
                         placeholder="Price"
-                        name="price"
+                        name="sellingPrice"
                         required
-                        disabled
-                        readOnly
                       />
-                      <label htmlFor={`price-${index}`}>Price</label>
+                      <label htmlFor={`price-${index}`}>Selling price</label>
                       {errors[`price-${index}`] && <div className="invalid-feedback">{errors[`price-${index}`]}</div>}
                     </div>
                   </div>
                 </div>
               </div>
-              {
-                /*product.showStock*/ true && (
-                  <div className="mb-3 row">
-                    <label htmlFor="stock" className="col-sm-3 col-form-label">
-                      Items in stock:
-                    </label>
-                    <div className="col-sm-7">
-                      <input type="text" readOnly className="form-control-plaintext" id="stock" value={product?.stock_quantity} />
-                    </div>
-                  </div>
-                )
-              }
+              {product.showStock && (
+                <div className="mb-3 row">
+                  <span className="col">
+                    Items in stock: <b>{product?.stock_quantity}</b>
+                  </span>
+                </div>
+              )}
               {products.length > 1 && <hr />}
             </div>
           ))}

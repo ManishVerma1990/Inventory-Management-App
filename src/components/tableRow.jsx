@@ -4,10 +4,10 @@ function TableRow(props) {
       <tr
         className="accordion-header"
         id={`heading${props.id}`}
-        data-bs-toggle="collapse"
-        data-bs-target={`#collapse${props.id}`}
-        aria-expanded="false"
-        aria-controls={`collapse${props.id}`}
+        // data-bs-toggle="collapse"
+        // data-bs-target={`#collapse${props.id}`}
+        // aria-expanded="false"
+        // aria-controls={`collapse${props.id}`}
         style={{ cursor: "pointer" }}
       >
         <th scope="row">{props.serialNumber}</th>
@@ -19,7 +19,7 @@ function TableRow(props) {
         <td>{props.product.stock_quantity}</td>
       </tr>
 
-      <tr>
+      {/* <tr>
         <td colspan="6" className="p-0">
           <div
             id={`collapse${props.id}`}
@@ -60,7 +60,7 @@ function TableRow(props) {
             </div>
           </div>
         </td>
-      </tr>
+      </tr> */}
     </>
   );
 }

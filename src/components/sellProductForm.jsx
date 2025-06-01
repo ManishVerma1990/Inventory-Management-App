@@ -3,6 +3,7 @@ import Alert from "./alert";
 import Suggestions from "./suggestions";
 import Preview from "./preview";
 import jsPDF from "jspdf";
+import { FaXmark } from "react-icons/fa6";
 
 function SellProductForm() {
   const [products, setProducts] = useState([
@@ -181,7 +182,7 @@ function SellProductForm() {
     return false;
   };
 
-  const handleSubmit = (e, personDetails = {}, discount = 0) => {
+  const handleSubmit = async (e, personDetails = {}, discount = 0) => {
     e.preventDefault();
     let newErrors = {};
     let hasStockError = false;
@@ -203,7 +204,8 @@ function SellProductForm() {
     }
     if (!hasStockError) {
       sendFormData(personDetails, discount);
-      generatePDF(products, personDetails);
+      // generatePDF(products, personDetails);
+      await window.api.generateReceipt(products);
     }
   };
 
@@ -224,6 +226,27 @@ function SellProductForm() {
     ]);
   };
 
+  const removeProduct = (index) => {
+    if (products.length <= 1) {
+      return;
+    } // Prevent removing the last product
+    setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      Object.keys(newErrors).forEach((key) => {
+        if (
+          key.startsWith(`name-${index}`) ||
+          key.startsWith(`quantity-${index}`) ||
+          key.startsWith(`items-${index}`) ||
+          key.startsWith(`price-${index}`)
+        ) {
+          delete newErrors[key];
+        }
+      });
+      return newErrors;
+    });
+  };
+
   return (
     <div className="container  pt-3">
       <div className="card shadow p-3">
@@ -231,7 +254,21 @@ function SellProductForm() {
         {showPreview ? <Preview products={products} handleSubmit={handleSubmit} setShowPreview={setShowPreview} /> : ""}
         <form className={`needs-validation ${showPreview ? "blur-background" : ""}`} noValidate>
           {products.map((product, index) => (
-            <div key={index}>
+            <div key={index} style={{ position: "relative" }} className="pt-3">
+              <span
+                style={{
+                  position: "absolute",
+                  cursor: "pointer",
+                  color: "gray",
+                  right: "-0.25rem",
+                  top: "-1.75rem",
+                  fontSize: "2rem",
+                }}
+                onClick={() => removeProduct(index)}
+              >
+                <FaXmark />
+              </span>
+
               <div className="row mb-3">
                 <div className="col">
                   <div className="form-floating">
@@ -252,7 +289,7 @@ function SellProductForm() {
                       }
                       required
                     />
-                    <label htmlFor={`name-${index}`}>Name</label>
+                    <label htmlFor={`name-${index}`}>Product name</label>
                     {product.showSuggestions && <Suggestions values={values} callback={(value) => handleListClick(index, value)} />}
                     {errors[`name-${index}`] && <div className="invalid-feedback">{errors[`name-${index}`]}</div>}
                   </div>
@@ -272,7 +309,7 @@ function SellProductForm() {
                           disabled
                           readOnly
                         />
-                        <label htmlFor={`quantity-${index}`}>Quantity</label>
+                        <label htmlFor={`quantity-${index}`}>Product quantity</label>
                         {errors[`quantity-${index}`] && <div className="invalid-feedback">{errors[`quantity-${index}`]}</div>}
                       </div>
                     </div>
@@ -314,7 +351,7 @@ function SellProductForm() {
                       min="0"
                       required
                     />
-                    <label htmlFor={`items-${index}`}>Items</label>
+                    <label htmlFor={`items-${index}`}>Number of items</label>
                     {errors[`items-${index}`] && <div className="invalid-feedback">{errors[`items-${index}`]}</div>}
                   </div>
                 </div>
@@ -336,24 +373,19 @@ function SellProductForm() {
                         disabled
                         readOnly
                       />
-                      <label htmlFor={`price-${index}`}>Price</label>
+                      <label htmlFor={`price-${index}`}>Selling price</label>
                       {errors[`price-${index}`] && <div className="invalid-feedback">{errors[`price-${index}`]}</div>}
                     </div>
                   </div>
                 </div>
               </div>
-              {
-                /*product.showStock*/ true && (
-                  <div className="mb-3 row">
-                    <label htmlFor="stock" className="col-sm-3 col-form-label">
-                      Items in stock:
-                    </label>
-                    <div className="col-sm-7">
-                      <input type="text" readOnly className="form-control-plaintext" id="stock" value={product?.stock_quantity} />
-                    </div>
-                  </div>
-                )
-              }
+              {product.showStock && (
+                <div className="mb-3 row">
+                  <span className="col">
+                    Items in stock: <b>{product?.stock_quantity}</b>
+                  </span>
+                </div>
+              )}
               {products.length > 1 && <hr />}
             </div>
           ))}

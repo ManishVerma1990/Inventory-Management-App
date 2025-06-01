@@ -43,9 +43,9 @@ function createWindow() {
   // mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
 
   mainWindow.on("close", (event) => {
-    event.preventDefault(); // Prevent default close action
+    event.preventDefault();
     console.log("Closing app safely...");
-    mainWindow.destroy(); // Destroy window properly
+    mainWindow.destroy();
   });
 }
 

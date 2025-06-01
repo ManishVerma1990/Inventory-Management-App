@@ -59,71 +59,28 @@ const insertData = (product) => {
   });
 };
 
-const update = {
-  quantity: async ({ id }, quantity) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        db.run("PRAGMA key = 'Ma@7974561017';");
-        createTable();
+const update = async ({ id }, quantity, price) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      db.run("PRAGMA key = 'Ma@7974561017';");
+      createTable();
 
-        const sql = `UPDATE products SET stock_quantity = ? WHERE id = ?;`;
-        let data = await fetchData(id);
+      const sql = `UPDATE products SET stock_quantity = ?, selling_price = ? WHERE id = ?;`;
+      let data = await fetchData(id);
 
-        db.run(sql, [Number(quantity) + Number(data.stock_quantity), id], function (err) {
-          if (err) {
-            reject({ success: false, message: "Error updating product: " + err.message });
-          } else if (this.changes === 0) {
-            reject({ success: false, message: "No product updated" });
-          } else {
-            resolve({ success: true, message: `${data.name} restocked: ${quantity}` });
-          }
-        });
-      } catch (error) {
-        reject({ success: false, message: "Unexpected error: " + error.message });
-      }
-    });
-  },
-
-  // sold: async ({ id }, quantity) => {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       db.run("PRAGMA key = 'Ma@7974561017';");
-  //       createTable();
-
-  //       const sql = `UPDATE products SET product_sold = ? WHERE id = ?;`;
-  //       let data = await fetchData(id);
-
-  //       db.run(sql, [Math.abs(Number(quantity)) + Number(data.product_sold), id], function (err) {
-  //         if (err) {
-  //           reject({ success: false, message: "Error selling product: " + err.message });
-  //         } else if (this.changes === 0) {
-  //           reject({ success: false, message: "No product sold" });
-  //         } else {
-  //           resolve({ success: true, message: "Product sold: " + data.name + ", Items: " + quantity });
-  //         }
-  //       });
-  //     } catch (error) {
-  //       reject({ success: false, message: "Unexpected error: " + error.message });
-  //     }
-  //   });
-  // },
-
-  // price: (data) => {
-  //   // Set encryption key for reading data
-  //   db.run("PRAGMA key = 'Ma@7974561017';");
-  //   createTable();
-
-  //   const sql = `UPDATE products SET quantity = ? WHERE name = ?;`;
-  //   db.run(sql, [data.quantity, data.name], function (err) {
-  //     if (err) {
-  //       console.error("Error updating data:", err.message);
-  //     } else if (this.changes === 0) {
-  //       console.log("No product found with the given ID.");
-  //     } else {
-  //       console.log(`Updated product with name: ${data.name}`);
-  //     }
-  //   });
-  // },
+      db.run(sql, [Number(quantity) + Number(data.stock_quantity), price, id], function (err) {
+        if (err) {
+          reject({ success: false, message: "Error updating product: " + err.message });
+        } else if (this.changes === 0) {
+          reject({ success: false, message: "No product updated" });
+        } else {
+          resolve({ success: true, message: `${data.name} restocked: ${quantity}` });
+        }
+      });
+    } catch (error) {
+      reject({ success: false, message: "Unexpected error: " + error.message });
+    }
+  });
 };
 
 const fetchData = (id) => {

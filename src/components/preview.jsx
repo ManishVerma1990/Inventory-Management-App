@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Suggestions from "./suggestions";
 import { FaXmark } from "react-icons/fa6";
-import jsPDF from "jspdf";
 
 const Preview = ({ products, handleSubmit, setShowPreview }) => {
   const [personDetails, setPersonDetails] = useState({
